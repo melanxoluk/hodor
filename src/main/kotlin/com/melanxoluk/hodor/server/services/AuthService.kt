@@ -1,16 +1,10 @@
 package com.melanxoluk.hodor.server.services
 
-import com.melanxoluk.hodor.domain.ApplicationUser
-import com.melanxoluk.hodor.domain.HodorUser
+import com.melanxoluk.hodor.domain.*
 import com.melanxoluk.hodor.secure.PasswordHasher
 import com.melanxoluk.hodor.secure.TokenGenerator
-import com.melanxoluk.hodor.server.entities.AuthenticationEntry
-import com.melanxoluk.hodor.server.entities.LoginedHodorUser
-import com.melanxoluk.hodor.server.entities.UserType
-import com.melanxoluk.hodor.server.storage.repositories.AuthRepository
-import com.melanxoluk.hodor.server.storage.repositories.HodorUsersRepository
-import com.melanxoluk.hodor.server.storage.repositories.ApplicationUsersRepository
-import org.koin.standalone.inject
+import com.melanxoluk.hodor.server.storage.repositories.*
+import org.koin.standalone.get
 
 
 class AuthService: Service {
@@ -20,12 +14,60 @@ class AuthService: Service {
         private val NOT_AUTH = "Not authenticated"
     }
 
-    private val hodorUsersRepository by inject<HodorUsersRepository>()
-    private val appUsersRepository by inject<ApplicationUsersRepository>()
-    private val passwordHasher by inject<PasswordHasher>()
-    private val authRepository by inject<AuthRepository>()
-    private val tokenGenerator by inject<TokenGenerator>()
+    private val emailPassAuthRepository = get<EmailPasswordsAuthRepository>()
+    private val emailPassRepository = get<EmailPasswordsRepository>()
 
+    private val hodorUsersRepository = get<HodorUsersRepository>()
+    private val appUsersRepository = get<ApplicationUsersRepository>()
+    private val passwordHasher = get<PasswordHasher>()
+    private val authRepository = get<AuthRepository>()
+    private val tokenGenerator = get<TokenGenerator>()
+
+
+    // ~~~ email passwords flow
+    
+    // returns token new token if successful or error if not 
+    fun simpleLogin(email: String, password: String) = ok {
+        // todo: add some validation rules here? pass length, email is email
+
+        var newUser = false
+        var emailPass = emailPassRepository.findByEmail(email)
+        if (emailPass == null) {
+            newUser = true
+            emailPass = emailPassRepository.create(
+                EmailPassword(
+                    email = email,
+                    password = passwordHasher.hash(password)))
+        }
+
+        // pass hash check
+        val consumedHash = passwordHasher.hash(password)
+        val storedHash = emailPass.password
+        if (consumedHash != storedHash) {
+            return@ok clientError<String>(WRONG_PASSWORD)
+        }
+
+        // we need new token for user
+        val newToken = tokenGenerator.generate(email)
+
+        // and check previous entry if not user
+        if (!newUser) {
+            val authEntry = emailPassAuthRepository.findByEmailPasswordId(emailPass.id)
+            if (authEntry == null) {
+                emailPassAuthRepository.create(
+                    EmailPasswordAuthentication(
+                        emailPasswordId = emailPass.id,
+                        token = newToken))
+            } else {
+                emailPassAuthRepository.update(authEntry.apply {
+                    token = newToken
+                })
+            }
+        }
+
+        newToken
+    }
+    
 
     // ~~~ hodor users flow
 
@@ -45,7 +87,7 @@ class AuthService: Service {
 
         // checks are processed, return token
         return ok {
-            val token = refreshToken(hodorUser.id, UserType.HODOR)
+            val token = refreshToken(email, hodorUser.id, UserType.HODOR)
             LoginedHodorUser(hodorUser.userType, token)
         }
     }
@@ -76,7 +118,7 @@ class AuthService: Service {
         }
 
         // check are processed, return token
-        return ok { refreshToken(appUser.id, UserType.APP) }
+        return ok { refreshToken(email, appUser.id, UserType.APP) }
     }
 
     fun getAppUser(token: String): ServiceResult<ApplicationUser> {
@@ -89,9 +131,9 @@ class AuthService: Service {
 
     // ~~~ misc
 
-    private fun refreshToken(userId: Long, userType: UserType): String {
+    private fun refreshToken(email: String, userId: Long, userType: UserType): String {
         // we need new token for user
-        val newToken = tokenGenerator.generate()
+        val newToken = tokenGenerator.generate(email)
 
         // and check previous entry
         val existedEntry = if (userType == UserType.HODOR) {

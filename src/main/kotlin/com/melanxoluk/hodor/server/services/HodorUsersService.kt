@@ -2,10 +2,12 @@ package com.melanxoluk.hodor.server.services
 
 import com.melanxoluk.hodor.domain.HodorUser
 import com.melanxoluk.hodor.domain.HodorUserType
-import com.melanxoluk.hodor.server.entities.LoginedHodorUser
 import com.melanxoluk.hodor.server.storage.repositories.HodorUsersRepository
 import org.koin.standalone.inject
 
+
+data class LoginedHodorUser(val hodorUserType: HodorUserType,
+                            val token: String)
 
 class HodorUsersService: Service {
     private val authService by inject<AuthService>()

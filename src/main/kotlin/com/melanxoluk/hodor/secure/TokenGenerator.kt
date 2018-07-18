@@ -1,19 +1,22 @@
 package com.melanxoluk.hodor.secure
 
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.impl.crypto.MacProvider
+import org.joda.time.DateTime
 import java.util.*
 
 
-class TokenGenerator {
-    // todo: determine most secure way to build such tokens
-    fun generate() = UUID.randomUUID().toString()
+class TokenGenerator(private val key: String) {
+    fun generate(email: String) =
+        Jwts.builder()
+            .claim("email", email)
+            .setExpiration(DateTime().plusHours(1).toDate())
+            .signWith(SignatureAlgorithm.HS512, key)
+            .compact()
+}
 
-
-    companion object {
-        private val digits = "0123456789"
-        private val upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        private val lower = upper.toLowerCase(Locale.ROOT)
-
-        // whole set of all regular characters
-        private val alphanum = upper + lower + digits
-    }
+fun main(args: Array<String>) {
+    val encoded = MacProvider.generateKey().encoded
+    print(Base64.getEncoder().encode(encoded))
 }

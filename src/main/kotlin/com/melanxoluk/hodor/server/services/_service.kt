@@ -8,8 +8,8 @@ import org.koin.standalone.KoinComponent
 // if isOk
 //   errorMessage = null
 data class UnitServiceResult(val isOk: Boolean = false,
-                             @Expose val isClientError: Boolean = false,
-                             @Expose val isServerError: Boolean = true,
+                             @Transient val isClientError: Boolean = false,
+                             @Transient val isServerError: Boolean = false,
                              val errorMessage: String? = null) {
     companion object {
         private val OK = UnitServiceResult(true, false, false, null)
@@ -24,8 +24,8 @@ data class UnitServiceResult(val isOk: Boolean = false,
 //   result != null
 //   errorMessage = null
 data class ServiceResult<T>(val isOk: Boolean = false,
-                            @Expose val isClientError: Boolean = false,
-                            @Expose val isServerError: Boolean = true,
+                            @Transient val isClientError: Boolean = false,
+                            @Transient val isServerError: Boolean = false,
                             val errorMessage: String? = null,
                             val result: T? = null) {
 
@@ -41,7 +41,10 @@ data class ServiceResult<T>(val isOk: Boolean = false,
 interface Service: KoinComponent {
     fun <T> ok(action: () -> T?): ServiceResult<T> {
         return try {
-            ServiceResult.ok(action())
+            val res = action()
+            if (res is ServiceResult<*>)
+                return res as ServiceResult<T>
+            ServiceResult.ok(res)
         } catch (t: Throwable) {
             ServiceResult.serverError(t.message ?: t.javaClass.name)
         }

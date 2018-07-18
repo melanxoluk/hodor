@@ -34,7 +34,7 @@ ReadRepository<
     }
 
 
-    fun findSingleBy(where: Where): D? = with(table) {
+    fun findSingleBy(where: Where): D?  = with(table) {
         return transaction {
             return@transaction table
                 .select(where)

@@ -1,9 +1,6 @@
-3 modules:  
-    - domain, shared library between client & server
-    - kotlin client
-    - kotlin server
-
-Hodor is fullstack kotlin 
+2 different roles:  
+    - hodor app admin: manage users & their apps    
+    - hodor app user: manage itself apps & clients
 
 Hodor is server which helps to simplify user management operations
 for many applications:  
