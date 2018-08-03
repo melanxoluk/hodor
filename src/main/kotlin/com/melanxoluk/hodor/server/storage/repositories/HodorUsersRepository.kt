@@ -1,5 +1,6 @@
 package com.melanxoluk.hodor.server.storage.repositories
 
+import com.melanxoluk.hodor.domain.EmailPassword
 import com.melanxoluk.hodor.domain.HodorUser
 import com.melanxoluk.hodor.domain.HodorUserType
 import com.melanxoluk.hodor.server.storage.CrudTable
@@ -17,13 +18,9 @@ class HodorUsersRepository: LongCrudRepository<HodorUser, HodorUserTable>(HodorU
                                      CrudTable<Long, HodorUserTable, HodorUser> {
 
         private val _userType = enumeration("user_type", HodorUserType::class.java)
-        private val _password = text("password")
-        private val _email = text("email")
 
         override val fieldsMapper: HodorUser.(UpdateBuilder<Int>) -> Unit = {
             it[_userType] = this.userType
-            it[_password] = this.password
-            it[_email] = this.email
         }
 
         override val table: HodorUserTable = this
@@ -32,18 +29,25 @@ class HodorUsersRepository: LongCrudRepository<HodorUser, HodorUserTable>(HodorU
         override fun map(row: ResultRow) =
             HodorUser(
                 row[id].value,
-                row[_userType],
-                row[_password],
-                row[_email])
+                row[_userType])
     }
 
 
+    // holy fucking shit
     fun findByEmail(email: String): HodorUser? = with(table) {
         return transaction {
             return@transaction table
-                .select { _email eq email }
+                .leftJoin(EmailPasswordsRepository.EmailPasswordTable)
+                .select { EmailPasswordsRepository.EmailPasswordTable._email eq email }
                 .singleOrNull()
-                ?.let { map(it) }
+                ?.let { map(it).apply {
+                    val emailPass = EmailPasswordsRepository.EmailPasswordTable.map(it)
+                    if (this.emailPasswords == null) {
+                        this.emailPasswords = mutableListOf()
+                    }
+
+                    (this.emailPasswords as MutableList<EmailPassword>).add(emailPass)
+                } }
         }
     }
 }

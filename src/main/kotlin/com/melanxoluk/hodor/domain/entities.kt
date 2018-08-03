@@ -1,68 +1,124 @@
 package com.melanxoluk.hodor.domain
 
+import java.util.*
 
-data class EmailPassword(override var id: Long = 0L,
-                         var email: String,
-                         var password: String): LongDomain<EmailPassword> {
+
+data class EmailPassword(override val id: Long = 0L,
+                         val email: String,
+                         val password: String,
+                         val userId: Long
+                        ): LongDomain<EmailPassword> {
 
     override fun inserted(id: Long) = copy(id = id)
 }
 
-data class EmailPasswordAuthentication(override var id: Long = 0L,
-                                       var emailPasswordId: Long = 0L,
-                                       var token: String = "") : LongDomain<EmailPasswordAuthentication> {
+data class EmailPasswordAuthentication(override val id: Long = 0L,
+                                       val emailPasswordId: Long = 0L,
+                                       val token: String = "",
+                                       val clientId: Long = 0L
+                                      ) : LongDomain<EmailPasswordAuthentication> {
     override fun inserted(id: Long) = copy(id = id)
 }
 
+
+enum class Type {
+    BOOLEAN,
+    NUMBER,
+
+    LINE100,
+    LINE250,
+    TEXT,
+
+    OBJECT
+}
+
+data class PropertiesScheme(override val id: Long = 0L,
+                            val applicationId: Long = 0L
+                           ): LongDomain<PropertiesScheme> {
+    override fun inserted(id: Long) = copy(id = id)
+}
+
+data class PropertiesSchemeEntry(override val id: Long = 0L,
+                                 val schemeId: Long = 0L,
+                                 val parentId: Long? = null,
+                                 val name: String = "",
+                                 val type: Type = Type.LINE100
+                                ): LongDomain<PropertiesSchemeEntry> {
+
+    // list of child entries for composite type
+    val children: List<PropertiesSchemeEntry>? = null
+    val parent: PropertiesSchemeEntry? = null
+
+    override fun inserted(id: Long) = copy(id = id)
+}
+
+
+data class User(override val id: Long = 0L,
+                val applicationId: Long = 0L,
+                val properties: String = "",
+                val uuid: UUID = UUID.randomUUID()
+               ) : LongDomain<User> {
+
+    override fun inserted(id: Long) = copy(id = id)
+}
 
 enum class HodorUserType {
     ADMIN, REGULAR
 }
 
-data class HodorUser(override var id: Long = 0L,
-                     var userType: HodorUserType = HodorUserType.REGULAR,
-                     var password: String = "",
-                     var email: String = ""
-                    ): LongDomain<HodorUser> {
+data class HodorUser(override val id: Long = 0L,
+                     val userType: HodorUserType = HodorUserType.REGULAR
+                    ) : LongDomain<HodorUser> {
 
     var applications: List<Application>? = null
+    var emailPasswords: List<EmailPassword>? = null
 
     override fun inserted(id: Long) = copy(id = id)
 }
 
 
-data class Application(override var id: Long = 0L,
-                       var creatorId: Long = 0L,
-                       var token: String = "",
-                       var name: String = ""
+data class Application(override val id: Long = 0L,
+                       val creatorId: Long = 0L,
+                       val name: String = "",
+                       val uuid: UUID = UUID.randomUUID()
                       ): LongDomain<Application> {
 
-    var owner: HodorUser? = null
+    val owner: HodorUser? = null
 
     override fun inserted(id: Long) = copy(id = id)
 }
 
 
-data class ApplicationUser(override var id: Long = 0L,
-                           var applicationId: Long = 0L,
-                           var properties: String = "",
-                           var password: String = "",
-                           var email: String = ""
+data class ApplicationUser(override val id: Long = 0L,
+                           val applicationId: Long = 0L,
+                           val properties: String = "",
+                           val password: String = "",
+                           val email: String = ""
                           ): LongDomain<ApplicationUser> {
 
-    var application: Application? = null
-    var role: ApplicationUserRole? = null
+    val application: Application? = null
+    val role: ApplicationUserRole? = null
 
     override fun inserted(id: Long) = copy(id = id)
 }
 
-data class ApplicationUserRole(override var id: Long = 0L,
-                               var applicationId: Long = 0L,
-                               var role: String = ""
+data class ApplicationUserRole(override val id: Long = 0L,
+                               val applicationId: Long = 0L,
+                               val role: String = ""
                               ): LongDomain<ApplicationUserRole> {
 
-    var applicationUsers: List<ApplicationUser>? = null
-    var application: Application? = null
+    val applicationUsers: List<ApplicationUser>? = null
+    val application: Application? = null
+
+    override fun inserted(id: Long) = copy(id = id)
+}
+
+
+data class ApplicationClient(override val id: Long = 0L,
+                             val applicationId: Long = 0L,
+                             val type: String = "",
+                             val uuid: UUID = UUID.randomUUID()
+                            ): LongDomain<ApplicationClient> {
 
     override fun inserted(id: Long) = copy(id = id)
 }
@@ -73,9 +129,9 @@ enum class UserType {
 }
 
 data class AuthenticationEntry(override val id: Long = 0L,
-                               var userType: UserType = UserType.APP,
-                               var userId: Long = 0L,
-                               var token: String = ""
+                               val userType: UserType = UserType.APP,
+                               val userId: Long = 0L,
+                               val token: String = ""
                               ): LongDomain<AuthenticationEntry> {
 
     override fun inserted(id: Long) = copy(id = id)

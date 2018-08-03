@@ -27,17 +27,21 @@ class AuthService: Service {
     // ~~~ email passwords flow
     
     // returns token new token if successful or error if not 
-    fun simpleLogin(email: String, password: String) = ok {
+    fun simpleLogin(password: String, email: String, client: Long) = ok {
         // todo: add some validation rules here? pass length, email is email
 
-        var newUser = false
+        var newEmail = false
         var emailPass = emailPassRepository.findByEmail(email)
         if (emailPass == null) {
-            newUser = true
+            newEmail = true
+
+            // need to create new regular hodor user before
+            val newHodorUser = hodorUsersRepository.create(HodorUser())
             emailPass = emailPassRepository.create(
                 EmailPassword(
                     email = email,
-                    password = passwordHasher.hash(password)))
+                    password = passwordHasher.hash(password),
+                    userId = newHodorUser.id))
         }
 
         // pass hash check
@@ -51,7 +55,12 @@ class AuthService: Service {
         val newToken = tokenGenerator.generate(email)
 
         // and check previous entry if not user
-        if (!newUser) {
+        if (newEmail) {
+            emailPassAuthRepository.create(
+                EmailPasswordAuthentication(
+                    emailPasswordId = emailPass.id,
+                    token = newToken))
+        } else {
             val authEntry = emailPassAuthRepository.findByEmailPasswordId(emailPass.id)
             if (authEntry == null) {
                 emailPassAuthRepository.create(
@@ -71,7 +80,7 @@ class AuthService: Service {
 
     // ~~~ hodor users flow
 
-    fun loginHodorUser(email: String,
+    /*fun loginHodorUser(email: String,
                        password: String): ServiceResult<LoginedHodorUser> {
 
         // email check
@@ -97,12 +106,12 @@ class AuthService: Service {
             ?: return clientError(NOT_AUTH)
 
         return ok { hodorUsersRepository.read(authEntry.userId) }
-    }
+    }*/
 
 
     // ~~~ app users flow
 
-    fun loginApplicationUser(appId: Long,
+    /*fun loginApplicationUser(appId: Long,
                              email: String,
                              password: String): ServiceResult<String> {
 
@@ -126,7 +135,7 @@ class AuthService: Service {
             ?: return clientError(NOT_AUTH)
 
         return ok { appUsersRepository.read(authEntry.userId) }
-    }
+    }*/
 
 
     // ~~~ misc

@@ -16,7 +16,7 @@ import org.koin.standalone.inject
 class HodorUsersController(baseUrl: String,
                            app: Application): Controller(baseUrl, app) {
 
-    private val hodorUsersService by inject<HodorUsersService>()
+    //private val hodorUsersService by inject<HodorUsersService>()
 
     override fun routes(): Route.() -> Unit = {
         route("users") {
@@ -24,27 +24,27 @@ class HodorUsersController(baseUrl: String,
             // ~~~ regular login, retrieve necessary token to continue with system
 
             post {
-                val user = call.receive(EmailPassReq::class)
+                /*val user = call.receive(EmailPassReq::class)
                 if (notConfirmed(call, user)) return@post
 
                 val loginedUser =
                     hodorUsersService
                         .login(user.email!!, user.password!!)
 
-                call.respond(loginedUser)
+                call.respond(loginedUser)*/
             }
 
 
             // ~~~ regular registration, fill input and create new regular user
 
             post {
-                val user = call.receive(EmailPassReq::class)
+                /*val user = call.receive(EmailPassReq::class)
                 if (notConfirmed(call, user)) return@post
 
                 hodorUsersService
                     .createUser(user.email!!, user.password!!)
 
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.OK)*/
             }
 
 

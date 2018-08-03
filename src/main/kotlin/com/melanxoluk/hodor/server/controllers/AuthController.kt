@@ -11,8 +11,9 @@ import org.koin.standalone.get
 
 
 class EmailPassReq {
-    var email: String? = null
     var password: String? = null
+    var client: Long? = null
+    var email: String? = null
 }
 
 class AuthController(baseUrl: String,
@@ -32,6 +33,7 @@ class AuthController(baseUrl: String,
         post("simple_login") {
             val emailPassReq = call.receive<EmailPassReq>()
 
+            // client eq null => hodor web app
             if (!assert(emailPassReq.email, emailPassReq.password)) return@post
 
             respond(authService.simpleLogin(

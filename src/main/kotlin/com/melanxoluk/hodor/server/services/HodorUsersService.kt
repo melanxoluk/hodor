@@ -15,15 +15,15 @@ class HodorUsersService: Service {
 
     // necessary to notify about type of logined user, to determine
     // which type of application should be run: admin or usual
-    fun login(email: String, password: String): ServiceResult<LoginedHodorUser> {
+    /*fun login(email: String, password: String): ServiceResult<LoginedHodorUser> {
         return authService.loginHodorUser(email, password)
     }
 
     fun createAdmin(email: String, password: String) = ok {
-        repository.create(HodorUser(
+        *//*repository.create(HodorUser(
             userType = HodorUserType.ADMIN,
             password = password,
-            email = email))
+            email = email))*//*
     }
 
     fun createUser(email: String, password: String) = ok {
@@ -38,5 +38,5 @@ class HodorUsersService: Service {
 
     fun removeUser(id: Long) = ok {
         repository.delete(id)
-    }
+    }*/
 }
