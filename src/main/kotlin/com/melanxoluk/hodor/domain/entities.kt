@@ -3,11 +3,19 @@ package com.melanxoluk.hodor.domain
 import java.util.*
 
 
-data class EmailPassword(override val id: Long = 0L,
-                         val email: String,
-                         val password: String,
-                         val userId: Long
-                        ): LongDomain<EmailPassword> {
+data class UsernamePassword(
+    override val id: Long,
+    val username: String,
+    val password: String) : LongDomain<UsernamePassword> {
+
+    override fun inserted(id: Long) = copy(id = id)
+}
+
+data class EmailPassword(
+    override val id: Long = 0L,
+    val email: String,
+    val password: String,
+    val userId: Long) : LongDomain<EmailPassword> {
 
     override fun inserted(id: Long) = copy(id = id)
 }
