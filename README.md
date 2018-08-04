@@ -1,10 +1,20 @@
-2 different roles:  
-    - hodor app admin: manage users & their apps    
-    - hodor app user: manage itself apps & clients
+## About
 
-Hodor is server which helps to simplify user management operations
-for many applications:  
-    - crud users (creating is registration)  
-    - different auth schemes  
-    - support roles  
-    - support generic restriction mechanism
+Hodor is service which helps to simplify users auth flows for
+many applications simultaneously:  
+- crud users  
+- different auth schemes  
+- support roles  
+- support generic restriction mechanism
+    
+## Motivation
+
+Just try to apply DRY principe for new applications and stop 
+to create again & again same functionality  
+
+### Version 0.1 - Earliest MVP
+- simple login  
+- crud apps  
+- crud app clients
+- simplest validation
+
