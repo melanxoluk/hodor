@@ -6,7 +6,8 @@ import java.util.*
 data class UsernamePassword(
     override val id: Long,
     val username: String,
-    val password: String) : LongDomain<UsernamePassword> {
+    val password: String,
+    val userId: Long) : LongDomain<UsernamePassword> {
 
     override fun inserted(id: Long) = copy(id = id)
 }
@@ -97,12 +98,12 @@ data class Application(override val id: Long = 0L,
 }
 
 
-data class ApplicationUser(override val id: Long = 0L,
-                           val applicationId: Long = 0L,
-                           val properties: String = "",
-                           val password: String = "",
-                           val email: String = ""
-                          ): LongDomain<ApplicationUser> {
+data class AppUser(override val id: Long = 0L,
+                   val applicationId: Long = 0L,
+                   val properties: String = "",
+                   val password: String = "",
+                   val email: String = ""
+                          ): LongDomain<AppUser> {
 
     val application: Application? = null
     val role: ApplicationUserRole? = null
@@ -115,18 +116,19 @@ data class ApplicationUserRole(override val id: Long = 0L,
                                val role: String = ""
                               ): LongDomain<ApplicationUserRole> {
 
-    val applicationUsers: List<ApplicationUser>? = null
+    val appUsers: List<AppUser>? = null
     val application: Application? = null
 
     override fun inserted(id: Long) = copy(id = id)
 }
 
 
-data class ApplicationClient(override val id: Long = 0L,
-                             val applicationId: Long = 0L,
-                             val type: String = "",
-                             val uuid: UUID = UUID.randomUUID()
-                            ): LongDomain<ApplicationClient> {
+data class AppClient(
+    override val id: Long = 0L,
+    val applicationId: Long = 0L,
+    val type: String = "",
+    val uuid: UUID = UUID.randomUUID()
+) : LongDomain<AppClient> {
 
     override fun inserted(id: Long) = copy(id = id)
 }

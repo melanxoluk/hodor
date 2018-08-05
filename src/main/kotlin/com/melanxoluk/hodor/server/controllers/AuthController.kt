@@ -36,9 +36,10 @@ class AuthController(baseUrl: String,
             // client eq null => hodor web app
             if (!assert(emailPassReq.email, emailPassReq.password)) return@post
 
-            respond(authService.simpleLogin(
+            /*respond(authService.simpleLogin(
                 emailPassReq.email!!,
-                emailPassReq.password!!))
+                emailPassReq.password!!,
+                0))*/
         }
     }
 }

@@ -83,17 +83,21 @@ object HodorApplication: KoinComponent {
         // necessary app beans
         val hodorModule = applicationContext {
             // domain, repositories
+            bean { UsernamePasswordsRepository() }
             bean { EmailPasswordsAuthRepository() }
+            bean { AppUsersRepository() }
             bean { EmailPasswordsRepository() }
-            bean { ApplicationUsersRepository() }
+            bean { ApplicationsRepository() }
             bean { HodorUsersRepository() }
+            bean { AppClientsRepository() }
+            bean { UsersRepository() }
             bean { AuthRepository() }
 
             // services
             bean { HodorUsersService() }
             bean { AuthService() }
 
-            // controllers factories
+            // controllers
             bean("allControllers") { listOf(
                 HodorUsersController(it["baseUrl"], it["app"]),
                 StatusController(it["baseUrl"], it["app"]),

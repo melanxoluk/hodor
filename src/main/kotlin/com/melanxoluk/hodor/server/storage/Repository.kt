@@ -3,6 +3,7 @@ package com.melanxoluk.hodor.server.storage
 import com.melanxoluk.hodor.domain.Domain
 import com.melanxoluk.hodor.domain.IdDomain
 import org.jetbrains.exposed.dao.IdTable
+import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -158,3 +159,11 @@ interface CrudTable<
         }
     }
 }
+
+abstract class LongCrudTable<
+    T : IdTable<Long>,
+    D : IdDomain<Long, D>>(
+        name: String,
+        idName: String = "id")
+    : LongIdTable(name, idName),
+      CrudTable<Long, T, D>

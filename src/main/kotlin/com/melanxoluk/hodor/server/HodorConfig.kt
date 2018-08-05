@@ -18,6 +18,7 @@ object HodorConfig {
     }
 }
 
+
 data class SuperUser(var login: String = "",
                      var password: String = "")
 

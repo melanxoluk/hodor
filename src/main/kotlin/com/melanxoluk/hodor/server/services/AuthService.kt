@@ -18,7 +18,7 @@ class AuthService: Service {
     private val emailPassRepository = get<EmailPasswordsRepository>()
 
     private val hodorUsersRepository = get<HodorUsersRepository>()
-    private val appUsersRepository = get<ApplicationUsersRepository>()
+    private val appUsersRepository = get<AppUsersRepository>()
     private val passwordHasher = get<PasswordHasher>()
     private val authRepository = get<AuthRepository>()
     private val tokenGenerator = get<TokenGenerator>()
@@ -68,9 +68,9 @@ class AuthService: Service {
                         emailPasswordId = emailPass.id,
                         token = newToken))
             } else {
-                emailPassAuthRepository.update(authEntry.apply {
+                emailPassAuthRepository.update(authEntry.copy(
                     token = newToken
-                })
+                ))
             }
         }
 
@@ -130,7 +130,7 @@ class AuthService: Service {
         return ok { refreshToken(email, appUser.id, UserType.APP) }
     }
 
-    fun getAppUser(token: String): ServiceResult<ApplicationUser> {
+    fun getAppUser(token: String): ServiceResult<AppUser> {
         val authEntry = authRepository.findByToken(token)
             ?: return clientError(NOT_AUTH)
 
@@ -159,9 +159,9 @@ class AuthService: Service {
                     token = newToken))
         } else {
             // update if found
-            authRepository.update(existedEntry.apply {
+            authRepository.update(existedEntry.copy(
                 token = newToken
-            })
+            ))
         }
 
         return newToken
