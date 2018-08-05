@@ -1,6 +1,7 @@
 package com.melanxoluk.hodor.server.storage.repositories
 
 import com.melanxoluk.hodor.domain.Application
+import com.melanxoluk.hodor.domain.User
 import com.melanxoluk.hodor.server.storage.LongCrudRepository
 import com.melanxoluk.hodor.server.storage.LongCrudTable
 import com.melanxoluk.hodor.server.storage.repositories.ApplicationsRepository.ApplicationsTable
@@ -35,4 +36,6 @@ class ApplicationsRepository: LongCrudRepository<Application, ApplicationsTable>
 
 
     fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
+
+    fun findByCreator(creator: User) = findSingleBy { _creatorId eq creator.id }
 }

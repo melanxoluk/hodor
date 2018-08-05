@@ -3,6 +3,7 @@ package com.melanxoluk.hodor.server.storage.repositories
 import com.melanxoluk.hodor.domain.User
 import com.melanxoluk.hodor.server.storage.LongCrudRepository
 import com.melanxoluk.hodor.server.storage.LongCrudTable
+import com.melanxoluk.hodor.server.storage.hodorPrefix
 import com.melanxoluk.hodor.server.storage.repositories.ApplicationsRepository.ApplicationsTable
 import com.melanxoluk.hodor.server.storage.repositories.UsersRepository.UserTable
 import org.jetbrains.exposed.dao.EntityID
@@ -19,7 +20,7 @@ class UsersRepository: LongCrudRepository<User, UserTable>(UserTable) {
         private val _uuid = uuid("uuid")
 
         override val fieldsMapper: User.(UpdateBuilder<Int>) -> Unit = {
-            it[_applicationId] = EntityID(this.applicationId, ApplicationsTable)
+            it[_applicationId] = EntityID(this.appId, ApplicationsTable)
             it[_properties] = this.properties
             it[_uuid] = this.uuid
         }
@@ -36,4 +37,6 @@ class UsersRepository: LongCrudRepository<User, UserTable>(UserTable) {
 
 
     fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
+
+    fun findWithHodorPrefix() = findSingleBy { _properties eq hodorPrefix }
 }

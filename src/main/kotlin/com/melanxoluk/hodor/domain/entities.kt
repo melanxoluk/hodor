@@ -63,10 +63,20 @@ data class PropertiesSchemeEntry(override val id: Long = 0L,
 
 
 data class User(override val id: Long = 0L,
-                val applicationId: Long = 0L,
+                val appId: Long = 0L,
                 val properties: String = "",
                 val uuid: UUID = UUID.randomUUID()
                ) : LongDomain<User> {
+
+    val roles: List<AppRole>? = null
+
+    override fun inserted(id: Long) = copy(id = id)
+}
+
+data class UsersRole(override val id: Long = 0L,
+                     val roleId: Long = 0L,
+                     val userId: Long = 0L
+                    ): LongDomain<UsersRole> {
 
     override fun inserted(id: Long) = copy(id = id)
 }
@@ -106,15 +116,16 @@ data class AppUser(override val id: Long = 0L,
                           ): LongDomain<AppUser> {
 
     val application: Application? = null
-    val role: ApplicationUserRole? = null
+    val role: AppRole? = null
 
     override fun inserted(id: Long) = copy(id = id)
 }
 
-data class ApplicationUserRole(override val id: Long = 0L,
-                               val applicationId: Long = 0L,
-                               val role: String = ""
-                              ): LongDomain<ApplicationUserRole> {
+data class AppRole(override val id: Long = 0L,
+                   val uuid: UUID = UUID.randomUUID(),
+                   val appId: Long = 0L,
+                   val name: String = ""
+                              ): LongDomain<AppRole> {
 
     val appUsers: List<AppUser>? = null
     val application: Application? = null
@@ -125,7 +136,7 @@ data class ApplicationUserRole(override val id: Long = 0L,
 
 data class AppClient(
     override val id: Long = 0L,
-    val applicationId: Long = 0L,
+    val appId: Long = 0L,
     val type: String = "",
     val uuid: UUID = UUID.randomUUID()
 ) : LongDomain<AppClient> {
@@ -145,4 +156,8 @@ data class AuthenticationEntry(override val id: Long = 0L,
                               ): LongDomain<AuthenticationEntry> {
 
     override fun inserted(id: Long) = copy(id = id)
+
+    fun f() {
+
+    }
 }

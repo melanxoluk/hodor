@@ -1,5 +1,6 @@
 package com.melanxoluk.hodor.server.storage.repositories
 
+import com.melanxoluk.hodor.domain.User
 import com.melanxoluk.hodor.domain.UsernamePassword
 import com.melanxoluk.hodor.server.storage.CrudTable
 import com.melanxoluk.hodor.server.storage.LongCrudRepository
@@ -18,12 +19,12 @@ class UsernamePasswordsRepository: LongCrudRepository<UsernamePassword, Username
 
         val _username = text("username")
         val _password = text("password")
-        val _user = reference("user", UsersRepository.UserTable)
+        val _userId = reference("user_id", UsersRepository.UserTable)
 
         override val fieldsMapper: UsernamePassword.(UpdateBuilder<Int>) -> Unit = {
             it[_username] = this.username
             it[_password] = this.password
-            it[_user] = EntityID(this.userId, UsersRepository.UserTable)
+            it[_userId] = EntityID(this.userId, UsersRepository.UserTable)
         }
 
         override val table: UsernamePasswordTable = this
@@ -34,7 +35,7 @@ class UsernamePasswordsRepository: LongCrudRepository<UsernamePassword, Username
                 row[id].value,
                 row[_username],
                 row[_password],
-                row[_user].value)
+                row[_userId].value)
     }
 
 
@@ -46,4 +47,6 @@ class UsernamePasswordsRepository: LongCrudRepository<UsernamePassword, Username
                 ?.let { map(it) }
         }
     }
+
+    fun findByUser(user: User) = findSingleBy { _userId eq user.id }
 }
