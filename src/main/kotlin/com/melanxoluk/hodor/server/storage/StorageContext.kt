@@ -1,6 +1,5 @@
 package com.melanxoluk.hodor.server.storage
 
-import com.melanxoluk.hodor.allNotNull
 import com.melanxoluk.hodor.domain.*
 import com.melanxoluk.hodor.server.DatabaseProperties
 import com.melanxoluk.hodor.server.HodorConfig
@@ -72,7 +71,7 @@ var hodorAdminRole =
         uuid = UUID.fromString("9bf49948-7100-4fb6-977a-ec26cf9e8820"),
         name = "admin")
     private set
-        
+
 var hodorUserRole =
     AppRole(
         id = 0,
@@ -83,7 +82,7 @@ var hodorUserRole =
     private set
 
 var hodorRoles = listOf(hodorAdminRole, hodorUserRole)
-    
+
 
 
 // ~~~ logic to initialize storage context
@@ -95,6 +94,7 @@ object StorageContext: KoinComponent {
     private val usernamePasswordsRepository = get<UsernamePasswordsRepository>()
     private val applicationsRepository = get<ApplicationsRepository>()
     private val appClientsRepository = get<AppClientsRepository>()
+    private val usersRolesRepository = get<UsersRolesRepository>()
     private val appRolesRepository = get<AppRolesRepository>()
     private val usersRepository = get<UsersRepository>()
 
@@ -107,26 +107,14 @@ object StorageContext: KoinComponent {
             databaseProperties.user,
             databaseProperties.password)
 
-        // check status of hodor app entities
-        val foundUser = usersRepository.findByUuid(hodorSuperUser.uuid)
-        val foundApp = applicationsRepository.findByUuid(hodorApp.uuid)
-        val found = allNotNull(foundUser, foundApp)
-        if (found) return
-
-        // but if not found necessary to initialize hodor app context
-        // need to find reference constraint of user field to app, then:
-        // 1) alter remove constraint
-        // 2) insert hodor user
-        // 3) insert hodor app
-        // 4) alter add constraint back
+        // refresh hodor app entities
         transaction {
             TransactionManager.current().exec("ALTER TABLE users DROP CONSTRAINT users_application_fkey")
-
-            val user = usersRepository.create(hodorSuperUser)
-            val userPass = usernamePasswordsRepository.create(hodorSuperUsernamePassword)
-            val app = applicationsRepository.create(hodorApp)
-            val client = appClientsRepository.create(hodorClient)
-
+            initHodorUser()
+            initHodorUsernamePass(hodorSuperUser)
+            initHodorApp(hodorSuperUser)
+            initHodorAppClient(hodorApp)
+            initHodorAppRoles(hodorSuperUser, hodorApp)
             TransactionManager.current().exec("ALTER TABLE users ADD FOREIGN KEY (application) REFERENCES applications(id) ON DELETE RESTRICT")
         }
     }
@@ -182,6 +170,13 @@ object StorageContext: KoinComponent {
             ?: appRolesRepository.create(
                 hodorAdminRole.copy(appId = app.id))
 
+        var adminUserRole = usersRolesRepository
+            .findByUserAndRole(user, hodorAdminRole)
+
+        adminUserRole = adminUserRole
+            ?: usersRolesRepository.create(
+                UsersRole(userId = user.id, roleId = hodorAdminRole.id))
+
 
         val user =
             appRolesRepository
@@ -192,6 +187,6 @@ object StorageContext: KoinComponent {
                 hodorUserRole.copy(appId = app.id))
 
 
-
+        hodorRoles = listOf(hodorAdminRole, hodorUserRole)
     }
 }
