@@ -4,7 +4,7 @@ import com.melanxoluk.hodor.domain.User
 import com.melanxoluk.hodor.server.storage.LongCrudRepository
 import com.melanxoluk.hodor.server.storage.LongCrudTable
 import com.melanxoluk.hodor.server.storage.hodorPrefix
-import com.melanxoluk.hodor.server.storage.repositories.ApplicationsRepository.ApplicationsTable
+import com.melanxoluk.hodor.server.storage.repositories.AppsRepository.ApplicationsTable
 import com.melanxoluk.hodor.server.storage.repositories.UsersRepository.UserTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
@@ -15,7 +15,7 @@ import java.util.*
 class UsersRepository: LongCrudRepository<User, UserTable>(UserTable) {
     companion object UserTable: LongCrudTable<UserTable, User>("users") {
 
-        private val _applicationId = reference("application", ApplicationsTable)
+        private val _applicationId = reference("app_id", ApplicationsTable)
         private val _properties = text("properties")
         private val _uuid = uuid("uuid")
 

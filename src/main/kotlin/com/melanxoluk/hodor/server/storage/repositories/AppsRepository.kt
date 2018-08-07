@@ -1,24 +1,24 @@
 package com.melanxoluk.hodor.server.storage.repositories
 
-import com.melanxoluk.hodor.domain.Application
+import com.melanxoluk.hodor.domain.App
 import com.melanxoluk.hodor.domain.User
 import com.melanxoluk.hodor.server.storage.LongCrudRepository
 import com.melanxoluk.hodor.server.storage.LongCrudTable
-import com.melanxoluk.hodor.server.storage.repositories.ApplicationsRepository.ApplicationsTable
+import com.melanxoluk.hodor.server.storage.repositories.AppsRepository.ApplicationsTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import java.util.*
 
 
-class ApplicationsRepository: LongCrudRepository<Application, ApplicationsTable>(ApplicationsTable) {
+class AppsRepository: LongCrudRepository<App, ApplicationsTable>(ApplicationsTable) {
 
-    companion object ApplicationsTable: LongCrudTable<ApplicationsTable, Application>("applications") {
-        private val _creatorId = reference("creator", UsersRepository.UserTable)
+    companion object ApplicationsTable: LongCrudTable<ApplicationsTable, App>("apps") {
+        private val _creatorId = reference("creator_id", UsersRepository.UserTable)
         private val _uuid = uuid("uuid")
         private val _name = text("name")
 
-        override val fieldsMapper: Application.(UpdateBuilder<Int>) -> Unit = {
+        override val fieldsMapper: App.(UpdateBuilder<Int>) -> Unit = {
             it[_creatorId] = EntityID(this.creatorId, UsersRepository.UserTable)
             it[_uuid] = this.uuid
             it[_name] = this.name
@@ -27,7 +27,7 @@ class ApplicationsRepository: LongCrudRepository<Application, ApplicationsTable>
         override val table = this
 
         override fun map(row: ResultRow) =
-            Application(
+            App(
                 row[id].value,
                 row[_creatorId].value,
                 row[_name],

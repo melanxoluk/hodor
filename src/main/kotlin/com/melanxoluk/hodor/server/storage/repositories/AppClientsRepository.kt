@@ -1,10 +1,10 @@
 package com.melanxoluk.hodor.server.storage.repositories
 
 import com.melanxoluk.hodor.domain.AppClient
-import com.melanxoluk.hodor.domain.Application
+import com.melanxoluk.hodor.domain.App
 import com.melanxoluk.hodor.server.storage.LongCrudRepository
 import com.melanxoluk.hodor.server.storage.LongCrudTable
-import com.melanxoluk.hodor.server.storage.repositories.ApplicationsRepository.ApplicationsTable
+import com.melanxoluk.hodor.server.storage.repositories.AppsRepository.ApplicationsTable
 import com.melanxoluk.hodor.server.storage.repositories.AppClientsRepository.AppClientsTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
@@ -39,5 +39,5 @@ class AppClientsRepository: LongCrudRepository<AppClient, AppClientsTable>(AppCl
 
     fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
 
-    fun findByApp(app: Application) = findSingleBy { _appId eq app.id }
+    fun findByApp(app: App) = findSingleBy { _appId eq app.id }
 }

@@ -1,7 +1,7 @@
 package com.melanxoluk.hodor.server.storage.repositories
 
 import com.melanxoluk.hodor.domain.AppRole
-import com.melanxoluk.hodor.domain.Application
+import com.melanxoluk.hodor.domain.App
 import com.melanxoluk.hodor.server.storage.LongCrudRepository
 import com.melanxoluk.hodor.server.storage.LongCrudTable
 import com.melanxoluk.hodor.server.storage.repositories.AppRolesRepository.AppRolesTable
@@ -15,12 +15,12 @@ import java.util.*
 class AppRolesRepository: LongCrudRepository<AppRole, AppRolesTable>(AppRolesTable) {
     companion object AppRolesTable : LongCrudTable<AppRolesTable, AppRole>("app_roles") {
 
-        private val _appId = reference("app_id", ApplicationsRepository)
+        private val _appId = reference("app_id", AppsRepository)
         private val _uuid = uuid("uuid")
         private val _name = text("name")
 
         override val fieldsMapper: AppRole.(UpdateBuilder<Int>) -> Unit = {
-            it[_appId] = EntityID(this.appId, ApplicationsRepository)
+            it[_appId] = EntityID(this.appId, AppsRepository)
             it[_uuid] = this.uuid
             it[_name] = this.name
         }
@@ -39,6 +39,6 @@ class AppRolesRepository: LongCrudRepository<AppRole, AppRolesTable>(AppRolesTab
 
     fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
 
-    fun findByAppAndName(app: Application, name: String) =
+    fun findByAppAndName(app: App, name: String) =
         findSingleBy { (_appId eq app.id) and (_name eq name) }
 }

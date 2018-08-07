@@ -89,18 +89,18 @@ data class HodorUser(override val id: Long = 0L,
                      val userType: HodorUserType = HodorUserType.REGULAR
                     ) : LongDomain<HodorUser> {
 
-    var applications: List<Application>? = null
+    var apps: List<App>? = null
     var emailPasswords: List<EmailPassword>? = null
 
     override fun inserted(id: Long) = copy(id = id)
 }
 
 
-data class Application(override val id: Long = 0L,
-                       val creatorId: Long = 0L,
-                       val name: String = "",
-                       val uuid: UUID = UUID.randomUUID()
-                      ): LongDomain<Application> {
+data class App(override val id: Long = 0L,
+               val creatorId: Long = 0L,
+               val name: String = "",
+               val uuid: UUID = UUID.randomUUID()
+              ): LongDomain<App> {
 
     val owner: HodorUser? = null
 
@@ -115,7 +115,7 @@ data class AppUser(override val id: Long = 0L,
                    val email: String = ""
                           ): LongDomain<AppUser> {
 
-    val application: Application? = null
+    val app: App? = null
     val role: AppRole? = null
 
     override fun inserted(id: Long) = copy(id = id)
@@ -128,7 +128,7 @@ data class AppRole(override val id: Long = 0L,
                               ): LongDomain<AppRole> {
 
     val appUsers: List<AppUser>? = null
-    val application: Application? = null
+    val app: App? = null
 
     override fun inserted(id: Long) = copy(id = id)
 }

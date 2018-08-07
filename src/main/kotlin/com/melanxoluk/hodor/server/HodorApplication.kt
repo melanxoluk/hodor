@@ -85,11 +85,13 @@ object HodorApplication: KoinComponent {
             // domain, repositories
             bean { UsernamePasswordsRepository() }
             bean { EmailPasswordsAuthRepository() }
-            bean { AppUsersRepository() }
             bean { EmailPasswordsRepository() }
-            bean { ApplicationsRepository() }
-            bean { HodorUsersRepository() }
+            bean { AppsRepository() }
             bean { AppClientsRepository() }
+            bean { HodorUsersRepository() }
+            bean { UsersRolesRepository() }
+            bean { AppRolesRepository() }
+            bean { AppUsersRepository() }
             bean { UsersRepository() }
             bean { AuthRepository() }
 
@@ -118,8 +120,8 @@ object HodorApplication: KoinComponent {
         // init storage
         StorageContext.initialize(HodorConfig.databaseProperties)
 
-        // start ktor, should apply application.conf params & continue
-        // bootstrapping in Application.main function which is higher
+        // start ktor, should apply app.conf params & continue
+        // bootstrapping in App.main function which is higher
         val server = embeddedServer(Netty, commandLineEnvironment(args))
 
         // run server

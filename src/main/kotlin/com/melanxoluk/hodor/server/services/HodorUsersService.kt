@@ -14,7 +14,7 @@ class HodorUsersService: Service {
     private val repository by inject<HodorUsersRepository>()
 
     // necessary to notify about type of logined user, to determine
-    // which type of application should be run: admin or usual
+    // which type of app should be run: admin or usual
     /*fun login(email: String, password: String): ServiceResult<LoginedHodorUser> {
         return authService.loginHodorUser(email, password)
     }

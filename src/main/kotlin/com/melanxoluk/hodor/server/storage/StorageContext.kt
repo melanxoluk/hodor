@@ -16,8 +16,8 @@ import kotlin.reflect.jvm.jvmName
 
 // fixme:
 //   stop to embed uuids in sources. Decide how to handle situation
-//   when after first starting application & creating that entities
-//   such uuids makes lost and run application again
+//   when after first starting app & creating that entities
+//   such uuids makes lost and run app again
 
 
 // fixme:
@@ -48,7 +48,7 @@ var hodorSuperUser =
 // ~~~ hodor app
 
 var hodorApp =
-    Application(
+    App(
         id = 0,
         creatorId = 0,
         name = hodorPrefix + "Hodor",
@@ -92,7 +92,7 @@ object StorageContext: KoinComponent {
     private const val postgresJdbcTemplate = "jdbc:postgresql:%s"
 
     private val usernamePasswordsRepository = get<UsernamePasswordsRepository>()
-    private val applicationsRepository = get<ApplicationsRepository>()
+    private val applicationsRepository = get<AppsRepository>()
     private val appClientsRepository = get<AppClientsRepository>()
     private val usersRolesRepository = get<UsersRolesRepository>()
     private val appRolesRepository = get<AppRolesRepository>()
@@ -109,13 +109,13 @@ object StorageContext: KoinComponent {
 
         // refresh hodor app entities
         transaction {
-            TransactionManager.current().exec("ALTER TABLE users DROP CONSTRAINT users_application_fkey")
+            TransactionManager.current().exec("ALTER TABLE users DROP CONSTRAINT users_app_id_fkey")
             initHodorUser()
             initHodorUsernamePass(hodorSuperUser)
             initHodorApp(hodorSuperUser)
             initHodorAppClient(hodorApp)
             initHodorAppRoles(hodorSuperUser, hodorApp)
-            TransactionManager.current().exec("ALTER TABLE users ADD FOREIGN KEY (application) REFERENCES applications(id) ON DELETE RESTRICT")
+            TransactionManager.current().exec("ALTER TABLE users ADD FOREIGN KEY (app_id) REFERENCES apps(id) ON DELETE RESTRICT")
         }
     }
 
@@ -151,7 +151,7 @@ object StorageContext: KoinComponent {
                 hodorApp.copy(creatorId = creator.id))
     }
 
-    private fun initHodorAppClient(app: Application) {
+    private fun initHodorAppClient(app: App) {
         val client =
             appClientsRepository
                 .findByApp(app)
@@ -161,7 +161,7 @@ object StorageContext: KoinComponent {
                 hodorClient.copy(appId = app.id))
     }
 
-    private fun initHodorAppRoles(user: User, app: Application) {
+    private fun initHodorAppRoles(user: User, app: App) {
         val admin =
             appRolesRepository
                 .findByAppAndName(app, hodorAdminRole.name)
