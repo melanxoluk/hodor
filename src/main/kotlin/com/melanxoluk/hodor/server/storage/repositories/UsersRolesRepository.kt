@@ -21,7 +21,7 @@ class UsersRolesRepository: LongCrudRepository<UsersRole, UsersRolesTable>(Users
         private val _userId = reference("user_id", UserTable)
 
         override val fieldsMapper: UsersRole.(UpdateBuilder<Int>) -> Unit = {
-            it[_roleId] = EntityID(this.userId, AppRolesTable)
+            it[_roleId] = EntityID(this.roleId, AppRolesTable)
             it[_userId] = EntityID(this.userId, UserTable)
         }
 

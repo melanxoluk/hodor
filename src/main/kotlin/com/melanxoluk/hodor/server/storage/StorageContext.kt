@@ -110,11 +110,19 @@ object StorageContext: KoinComponent {
         // refresh hodor app entities
         transaction {
             TransactionManager.current().exec("ALTER TABLE users DROP CONSTRAINT users_app_id_fkey")
+        }
+
+        transaction {
             initHodorUser()
             initHodorUsernamePass(hodorSuperUser)
             initHodorApp(hodorSuperUser)
             initHodorAppClient(hodorApp)
             initHodorAppRoles(hodorSuperUser, hodorApp)
+        }
+
+        transaction {
+            hodorSuperUser = hodorSuperUser.copy(appId = hodorApp.id)
+            usersRepository.update(hodorSuperUser)
             TransactionManager.current().exec("ALTER TABLE users ADD FOREIGN KEY (app_id) REFERENCES apps(id) ON DELETE RESTRICT")
         }
     }
