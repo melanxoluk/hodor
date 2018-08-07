@@ -11,3 +11,4 @@ class UserRequestContext(
     val clientUuid: UUID,
     val appId: Long,
     val appUuid: UUID)
+

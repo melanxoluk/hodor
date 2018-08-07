@@ -25,13 +25,13 @@ class AuthService: Service {
 
 
     // ~~~ email passwords flow
-    
-    // returns token new token if successful or error if not 
-    fun simpleLogin(password: String, email: String, client: Long) = ok {
+
+    // returns token new token if successful or error if not
+    fun simpleUsernameLogin(username: String, password: String, client: Long) = ok {
         // todo: add some validation rules here? pass length, email is email
 
         var newEmail = false
-        var emailPass = emailPassRepository.findByEmail(email)
+        var emailPass = emailPassRepository.findByEmail(username)
         if (emailPass == null) {
             newEmail = true
 
@@ -39,7 +39,7 @@ class AuthService: Service {
             val newHodorUser = hodorUsersRepository.create(HodorUser())
             emailPass = emailPassRepository.create(
                 EmailPassword(
-                    email = email,
+                    email = username,
                     password = passwordHasher.hash(password),
                     userId = newHodorUser.id))
         }
@@ -52,7 +52,7 @@ class AuthService: Service {
         }
 
         // we need new token for user
-        val newToken = tokenGenerator.generate(email)
+        val newToken = tokenGenerator.generate(username)
 
         // and check previous entry if not user
         if (newEmail) {
@@ -76,7 +76,7 @@ class AuthService: Service {
 
         newToken
     }
-    
+
 
     // ~~~ hodor users flow
 

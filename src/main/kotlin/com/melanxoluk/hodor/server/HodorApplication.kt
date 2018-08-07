@@ -4,8 +4,8 @@ import com.melanxoluk.hodor.secure.PasswordHasher
 import com.melanxoluk.hodor.secure.TokenGenerator
 import com.melanxoluk.hodor.server.controllers.Controller
 import com.melanxoluk.hodor.server.controllers.AuthController
-import com.melanxoluk.hodor.server.controllers.StatusController
 import com.melanxoluk.hodor.server.controllers.HodorUsersController
+import com.melanxoluk.hodor.server.controllers.AboutController
 import com.melanxoluk.hodor.server.services.AuthService
 import com.melanxoluk.hodor.server.services.HodorUsersService
 import com.melanxoluk.hodor.server.storage.StorageContext
@@ -63,16 +63,10 @@ fun Application.main() {
 
     // initialize routing controllers
     get<List<Controller>>(parameters = {
-        mapOf("baseUrl" to "/v1", "app" to this)
+        mapOf(
+            "baseUrl" to "/api/v1",
+            "app" to this)
     })
-
-    routing {
-        route("test") {
-            get("check") {
-                call.respond("fuck")
-            }
-        }
-    }
 }
 
 
@@ -102,7 +96,7 @@ object HodorApplication: KoinComponent {
             // controllers
             bean("allControllers") { listOf(
                 HodorUsersController(it["baseUrl"], it["app"]),
-                StatusController(it["baseUrl"], it["app"]),
+                AboutController(it["baseUrl"], it["app"]),
                 AuthController(it["baseUrl"], it["app"]))
             }
 

@@ -108,6 +108,7 @@ object StorageContext: KoinComponent {
             databaseProperties.password)
 
         // refresh hodor app entities
+        // fixme: alter table only when need to insert entities
         transaction {
             TransactionManager.current().exec("ALTER TABLE users DROP CONSTRAINT users_app_id_fkey")
         }
