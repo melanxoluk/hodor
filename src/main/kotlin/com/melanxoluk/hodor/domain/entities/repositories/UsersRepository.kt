@@ -1,13 +1,13 @@
-package com.melanxoluk.hodor.domain.repositories
+package com.melanxoluk.hodor.domain.entities.repositories
 
 import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.entities.UsernamePassword
 import com.melanxoluk.hodor.domain.LongCrudRepository
 import com.melanxoluk.hodor.domain.LongCrudTable
 import com.melanxoluk.hodor.domain.hodorPrefix
-import com.melanxoluk.hodor.domain.repositories.AppsRepository.ApplicationsTable
-import com.melanxoluk.hodor.domain.repositories.UsernamePasswordsRepository.*
-import com.melanxoluk.hodor.domain.repositories.UsersRepository.UserTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.ApplicationsTable
+import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.*
+import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
@@ -17,8 +17,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 
-class UsersRepository: LongCrudRepository<User, UserTable>(UserTable) {
-    companion object UserTable: LongCrudTable<UserTable, User>("users") {
+class UsersRepository: LongCrudRepository<User, UsersTable>(UsersTable) {
+    companion object UsersTable: LongCrudTable<UsersTable, User>("users") {
 
         private val _appId = reference("app_id", ApplicationsTable)
         private val _properties = text("properties")
@@ -30,7 +30,7 @@ class UsersRepository: LongCrudRepository<User, UserTable>(UserTable) {
             it[_uuid] = this.uuid
         }
 
-        override val table: UserTable = this
+        override val table: UsersTable = this
 
 
         override fun map(row: ResultRow) =

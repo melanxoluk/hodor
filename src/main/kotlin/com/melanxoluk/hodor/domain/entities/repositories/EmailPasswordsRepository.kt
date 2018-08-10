@@ -1,9 +1,9 @@
-package com.melanxoluk.hodor.domain.repositories
+package com.melanxoluk.hodor.domain.entities.repositories
 
-import com.melanxoluk.hodor.domain.EmailPassword
+import com.melanxoluk.hodor.domain.entities.EmailPassword
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
-import com.melanxoluk.hodor.domain.repositories.EmailPasswordsRepository.EmailPasswordTable
+import com.melanxoluk.hodor.domain.entities.repositories.EmailPasswordsRepository.EmailPasswordTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -16,12 +16,12 @@ class EmailPasswordsRepository: LongCrudRepository<EmailPassword, EmailPasswordT
     companion object EmailPasswordTable: LongIdTable("email_passwords"),
         CrudTable<Long, EmailPasswordTable, EmailPassword> {
 
-        val _hodorUser = reference("hodor_user", HodorUsersRepository.HodorUserTable)
+        val _hodorUser = reference("hodor_user", HodorUsersRepository)
         val _password = text("password")
         val _email = text("email")
 
         override val fieldsMapper: EmailPassword.(UpdateBuilder<Int>) -> Unit = {
-            it[_hodorUser] = EntityID(this.userId, HodorUsersRepository.HodorUserTable)
+            it[_hodorUser] = EntityID(this.userId, HodorUsersRepository)
             it[_password] = this.password
             it[_email] = this.email
         }

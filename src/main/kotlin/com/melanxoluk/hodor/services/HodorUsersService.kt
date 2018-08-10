@@ -1,7 +1,7 @@
 package com.melanxoluk.hodor.services
 
-import com.melanxoluk.hodor.domain.HodorUserType
-import com.melanxoluk.hodor.domain.repositories.HodorUsersRepository
+import com.melanxoluk.hodor.domain.entities.HodorUserType
+import com.melanxoluk.hodor.domain.entities.repositories.HodorUsersRepository
 import org.koin.standalone.inject
 
 

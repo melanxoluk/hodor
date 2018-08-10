@@ -1,13 +1,13 @@
 package com.melanxoluk.hodor.services
 
-import com.melanxoluk.hodor.common.SimpleUsernameLogin
+import com.melanxoluk.hodor.common.UsernameLogin
 import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.entities.UsernamePassword
 import com.melanxoluk.hodor.secure.PasswordHasher
-import com.melanxoluk.hodor.domain.repositories.AppClientsRepository
-import com.melanxoluk.hodor.domain.repositories.AppsRepository
-import com.melanxoluk.hodor.domain.repositories.UsernamePasswordsRepository
-import com.melanxoluk.hodor.domain.repositories.UsersRepository
+import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository
+import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository
+import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository
 import org.koin.standalone.get
 import java.util.*
 
@@ -19,11 +19,11 @@ class UsersService: Service {
     private val appsRepository = get<AppsRepository>()
     private val passwordHasher = get<PasswordHasher>()
 
-    fun getOrCreate(login: SimpleUsernameLogin): UsernamePassword {
+    fun getOrCreate(login: UsernameLogin): UsernamePassword {
         return get(login) ?: create(login)
     }
 
-    fun get(login: SimpleUsernameLogin): UsernamePassword? {
+    fun get(login: UsernameLogin): UsernamePassword? {
         // find client by uuid
         val client = clientsRepository.findByUuid(login.client)
             ?: return null
@@ -35,7 +35,7 @@ class UsersService: Service {
         return pair.first.apply { user = pair.second }
     }
 
-    fun create(login: SimpleUsernameLogin): UsernamePassword {
+    fun create(login: UsernameLogin): UsernamePassword {
         val app = appsRepository.findByClientUuid(login.client)
             ?: throw IllegalArgumentException(
                 "Not found app with client ${login.client}")

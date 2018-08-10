@@ -1,9 +1,9 @@
-package com.melanxoluk.hodor.domain.repositories
+package com.melanxoluk.hodor.domain.entities.repositories
 
-import com.melanxoluk.hodor.domain.EmailPasswordAuthentication
+import com.melanxoluk.hodor.domain.entities.EmailPasswordAuthentication
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
-import com.melanxoluk.hodor.domain.repositories.EmailPasswordsAuthRepository.EmailPasswordsAuthenticationTable
+import com.melanxoluk.hodor.domain.entities.repositories.EmailPasswordsAuthRepository.EmailPasswordsAuthenticationTable
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder

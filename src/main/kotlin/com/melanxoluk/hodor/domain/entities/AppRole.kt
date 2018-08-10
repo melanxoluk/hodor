@@ -10,7 +10,7 @@ data class AppRole(override val id: Long = 0L,
                    val name: String
                   ): LongDomain<AppRole> {
 
-    val userRoles: List<UsersRole>? = null
+    val userRoles: List<UserRole>? = null
     val app: App? = null
 
     override fun inserted(id: Long) = copy(id = id)

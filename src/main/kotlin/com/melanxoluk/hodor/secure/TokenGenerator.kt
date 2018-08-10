@@ -1,6 +1,6 @@
 package com.melanxoluk.hodor.secure
 
-import com.melanxoluk.hodor.common.UsernameContext
+import com.melanxoluk.hodor.domain.context.UsernameContext
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.joda.time.DateTime

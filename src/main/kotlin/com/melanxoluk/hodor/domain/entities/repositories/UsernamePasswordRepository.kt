@@ -1,10 +1,10 @@
-package com.melanxoluk.hodor.domain.repositories
+package com.melanxoluk.hodor.domain.entities.repositories
 
 import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.entities.UsernamePassword
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
-import com.melanxoluk.hodor.domain.repositories.UsernamePasswordsRepository.UsernamePasswordTable
+import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.UsernamePasswordTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -19,12 +19,12 @@ class UsernamePasswordsRepository: LongCrudRepository<UsernamePassword, Username
 
         val _username = text("username")
         val _password = text("password")
-        val _userId = reference("user_id", UsersRepository.UserTable)
+        val _userId = reference("user_id", UsersRepository)
 
         override val fieldsMapper: UsernamePassword.(UpdateBuilder<Int>) -> Unit = {
             it[_username] = this.username
             it[_password] = this.password
-            it[_userId] = EntityID(this.userId, UsersRepository.UserTable)
+            it[_userId] = EntityID(this.userId, UsersRepository)
         }
 
         override val table: UsernamePasswordTable = this

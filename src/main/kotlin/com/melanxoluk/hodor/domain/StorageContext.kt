@@ -1,16 +1,22 @@
 package com.melanxoluk.hodor.domain
 
 import com.melanxoluk.hodor.domain.entities.*
+import com.melanxoluk.hodor.domain.entities.repositories.*
+import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository.AppClientsTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppCreatorsRepository.AppCreatorTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRolesTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.ApplicationsTable
+import com.melanxoluk.hodor.domain.entities.repositories.DefaultAppRolesRepository.DefaultAppRolesTable
+import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.UsernamePasswordTable
+import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
+import com.melanxoluk.hodor.domain.entities.repositories.UsersRolesRepository.UsersRolesTable
 import com.melanxoluk.hodor.server.DatabaseProperties
-import com.melanxoluk.hodor.server.HodorConfig
-import com.melanxoluk.hodor.domain.repositories.*
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
 import org.postgresql.Driver
-import java.util.*
 import kotlin.reflect.jvm.jvmName
 
 
@@ -19,7 +25,9 @@ object StorageContext: KoinComponent {
     private const val postgresJdbcTemplate = "jdbc:postgresql:%s"
 
     private val usernamePasswordsRepository = get<UsernamePasswordsRepository>()
+    private val defaultAppRolesRepository = get<DefaultAppRolesRepository>()
     private val applicationsRepository = get<AppsRepository>()
+    private val appCreatorsRepository = get<AppCreatorsRepository>()
     private val appClientsRepository = get<AppClientsRepository>()
     private val usersRolesRepository = get<UsersRolesRepository>()
     private val appRolesRepository = get<AppRolesRepository>()
@@ -34,37 +42,56 @@ object StorageContext: KoinComponent {
             databaseProperties.user,
             databaseProperties.password)
 
-        // refresh hodor app entities
-        // fixme: alter table only when need to insert entities
+        // todo:
+        //   need validation mechanism to check exists database scheme
+        //   with current
         transaction {
-            TransactionManager.current().exec("ALTER TABLE users DROP CONSTRAINT users_app_id_fkey")
+            SchemaUtils.createMissingTablesAndColumns(
+                UsernamePasswordTable,
+                DefaultAppRolesTable,
+                ApplicationsTable,
+                AppCreatorTable,
+                AppClientsTable,
+                UsersRolesTable,
+                AppRolesTable,
+                UsersTable
+            )
         }
 
+        // refresh hodor app entities
         transaction {
-            initHodorUser()
+            initHodorApp()
+            initHodorUser(hodorApp)
             initHodorUsernamePass(hodorSuperUser)
-            initHodorApp(hodorSuperUser)
             initHodorAppClient(hodorApp)
             initHodorAppRoles(hodorSuperUser, hodorApp)
-        }
-
-        transaction {
-            hodorSuperUser = hodorSuperUser.copy(appId = hodorApp.id)
-            usersRepository.update(hodorSuperUser)
-            TransactionManager.current().exec("ALTER TABLE users ADD FOREIGN KEY (app_id) REFERENCES apps(id) ON DELETE RESTRICT")
         }
     }
 
 
     // ~~~ init app entities
 
-    private fun initHodorUser() {
+    private fun initHodorApp() {
+        val app =
+            applicationsRepository
+                .findByName(hodorApp.name)
+
+        hodorApp = app ?:
+            applicationsRepository.create(hodorApp)
+    }
+
+    private fun initHodorUser(app: App) {
         val hodorUser =
             usersRepository
                 .findWithHodorPrefix()
 
-        hodorSuperUser = hodorUser
-            ?: usersRepository.create(hodorSuperUser)
+        if (hodorUser == null) {
+            hodorSuperUser = usersRepository.create(
+                hodorSuperUser.copy(appId = app.id))
+
+            appCreatorsRepository.create(
+                AppCreator(appId = app.id, userId = hodorSuperUser.id))
+        }
     }
 
     private fun initHodorUsernamePass(user: User) {
@@ -74,17 +101,7 @@ object StorageContext: KoinComponent {
 
         hodorSuperUsernamePassword = usernamePassword
             ?: usernamePasswordsRepository.create(
-            hodorSuperUsernamePassword.copy(userId = user.id))
-    }
-
-    private fun initHodorApp(creator: User) {
-        val app =
-            applicationsRepository
-                .findByCreator(creator)
-
-        hodorApp = app
-            ?: applicationsRepository.create(
-            hodorApp.copy(creatorId = creator.id))
+                hodorSuperUsernamePassword.copy(userId = user.id))
     }
 
     private fun initHodorAppClient(app: App) {
@@ -94,7 +111,7 @@ object StorageContext: KoinComponent {
 
         hodorClient = client
             ?: appClientsRepository.create(
-            hodorClient.copy(appId = app.id))
+                hodorClient.copy(appId = app.id))
     }
 
     private fun initHodorAppRoles(user: User, app: App) {
@@ -104,24 +121,27 @@ object StorageContext: KoinComponent {
 
         hodorAdminRole = admin
             ?: appRolesRepository.create(
-            hodorAdminRole.copy(appId = app.id))
+                hodorAdminRole.copy(appId = app.id))
 
         var adminUserRole = usersRolesRepository
             .findByUserAndRole(user, hodorAdminRole)
 
         adminUserRole = adminUserRole
             ?: usersRolesRepository.create(
-            UsersRole(userId = user.id, roleId = hodorAdminRole.id))
+                UserRole(userId = user.id, roleId = hodorAdminRole.id))
 
 
-        val user =
+        val userRole =
             appRolesRepository
                 .findByAppAndName(app, hodorUserRole.name)
 
-        hodorUserRole = user
-            ?: appRolesRepository.create(
-            hodorUserRole.copy(appId = app.id))
+        if (userRole == null) {
+            hodorUserRole = appRolesRepository.create(
+                hodorUserRole.copy(appId = app.id))
 
+            defaultAppRolesRepository.create(
+                DefaultAppRole(appId = app.id, roleId = hodorUserRole.id))
+        }
 
         hodorRoles = listOf(hodorAdminRole, hodorUserRole)
     }

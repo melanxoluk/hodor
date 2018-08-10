@@ -41,6 +41,14 @@ ReadRepository<
                 ?.let { map(it) }
         }
     }
+
+    fun findMany(where: Where): List<D>  = with(table) {
+        return transaction {
+            return@transaction table
+                .select(where)
+                .map { map(it) }
+        }
+    }
 }
 
 // todo if necessary

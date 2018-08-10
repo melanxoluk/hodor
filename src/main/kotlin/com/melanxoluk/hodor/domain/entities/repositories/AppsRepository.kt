@@ -1,12 +1,10 @@
-package com.melanxoluk.hodor.domain.repositories
+package com.melanxoluk.hodor.domain.entities.repositories
 
-import com.melanxoluk.hodor.domain.entities.App
-import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.LongCrudRepository
 import com.melanxoluk.hodor.domain.LongCrudTable
-import com.melanxoluk.hodor.domain.repositories.AppClientsRepository.*
-import com.melanxoluk.hodor.domain.repositories.AppsRepository.ApplicationsTable
-import org.jetbrains.exposed.dao.EntityID
+import com.melanxoluk.hodor.domain.entities.App
+import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository.AppClientsTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.ApplicationsTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -17,12 +15,10 @@ import java.util.*
 class AppsRepository: LongCrudRepository<App, ApplicationsTable>(ApplicationsTable) {
 
     companion object ApplicationsTable: LongCrudTable<ApplicationsTable, App>("apps") {
-        private val _creatorId = reference("creator_id", UsersRepository.UserTable)
         private val _uuid = uuid("uuid")
         private val _name = text("name")
 
         override val fieldsMapper: App.(UpdateBuilder<Int>) -> Unit = {
-            it[_creatorId] = EntityID(this.creatorId, UsersRepository.UserTable)
             it[_uuid] = this.uuid
             it[_name] = this.name
         }
@@ -32,7 +28,6 @@ class AppsRepository: LongCrudRepository<App, ApplicationsTable>(ApplicationsTab
         override fun map(row: ResultRow) =
             App(
                 row[id].value,
-                row[_creatorId].value,
                 row[_name],
                 row[_uuid])
     }
@@ -40,7 +35,7 @@ class AppsRepository: LongCrudRepository<App, ApplicationsTable>(ApplicationsTab
 
     fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
 
-    fun findByCreator(creator: User) = findSingleBy { _creatorId eq creator.id }
+    fun findByName(name: String) = findSingleBy { _name eq name }
 
     fun findByClientUuid(clientUuid: UUID): App? {
         return transaction {

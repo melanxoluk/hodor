@@ -1,11 +1,11 @@
-package com.melanxoluk.hodor.domain.repositories
+package com.melanxoluk.hodor.domain.entities.repositories
 
-import com.melanxoluk.hodor.domain.EmailPassword
-import com.melanxoluk.hodor.domain.HodorUser
-import com.melanxoluk.hodor.domain.HodorUserType
+import com.melanxoluk.hodor.domain.entities.EmailPassword
+import com.melanxoluk.hodor.domain.entities.HodorUser
+import com.melanxoluk.hodor.domain.entities.HodorUserType
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
-import com.melanxoluk.hodor.domain.repositories.HodorUsersRepository.HodorUserTable
+import com.melanxoluk.hodor.domain.entities.repositories.HodorUsersRepository.HodorUserTable
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
@@ -37,11 +37,11 @@ class HodorUsersRepository: LongCrudRepository<HodorUser, HodorUserTable>(HodorU
     fun findByEmail(email: String): HodorUser? = with(table) {
         return transaction {
             return@transaction table
-                .leftJoin(EmailPasswordsRepository.EmailPasswordTable)
-                .select { EmailPasswordsRepository.EmailPasswordTable._email eq email }
+                .leftJoin(EmailPasswordsRepository)
+                .select { EmailPasswordsRepository._email eq email }
                 .singleOrNull()
                 ?.let { map(it).apply {
-                    val emailPass = EmailPasswordsRepository.EmailPasswordTable.map(it)
+                    val emailPass = EmailPasswordsRepository.map(it)
                     if (this.emailPasswords == null) {
                         this.emailPasswords = mutableListOf()
                     }

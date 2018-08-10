@@ -1,9 +1,9 @@
-package com.melanxoluk.hodor.domain.repositories
+package com.melanxoluk.hodor.domain.entities.repositories
 
-import com.melanxoluk.hodor.domain.AppUser
+import com.melanxoluk.hodor.domain.entities.AppUser
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
-import com.melanxoluk.hodor.domain.repositories.AppUsersRepository.AppUsersTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppUsersRepository.AppUsersTable
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and

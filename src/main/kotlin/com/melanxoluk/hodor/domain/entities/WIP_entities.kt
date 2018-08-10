@@ -1,7 +1,6 @@
-package com.melanxoluk.hodor.domain
+package com.melanxoluk.hodor.domain.entities
 
-import com.melanxoluk.hodor.domain.entities.App
-import com.melanxoluk.hodor.domain.entities.AppRole
+import com.melanxoluk.hodor.domain.LongDomain
 
 
 data class EmailPassword(

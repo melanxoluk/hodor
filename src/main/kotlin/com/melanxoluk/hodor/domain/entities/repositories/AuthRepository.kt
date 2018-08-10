@@ -1,10 +1,10 @@
-package com.melanxoluk.hodor.domain.repositories
+package com.melanxoluk.hodor.domain.entities.repositories
 
-import com.melanxoluk.hodor.domain.AuthenticationEntry
-import com.melanxoluk.hodor.domain.UserType
+import com.melanxoluk.hodor.domain.entities.AuthenticationEntry
+import com.melanxoluk.hodor.domain.entities.UserType
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
-import com.melanxoluk.hodor.domain.repositories.AuthRepository.AuthenticationEntriesTable
+import com.melanxoluk.hodor.domain.entities.repositories.AuthRepository.AuthenticationEntriesTable
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and

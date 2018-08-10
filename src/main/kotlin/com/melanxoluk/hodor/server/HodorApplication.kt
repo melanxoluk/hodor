@@ -9,6 +9,7 @@ import com.melanxoluk.hodor.server.controllers.AboutController
 import com.melanxoluk.hodor.services.AuthService
 import com.melanxoluk.hodor.services.HodorUsersService
 import com.melanxoluk.hodor.domain.StorageContext
+import com.melanxoluk.hodor.domain.entities.repositories.*
 import com.melanxoluk.hodor.domain.repositories.*
 import io.ktor.application.Application
 import io.ktor.application.install

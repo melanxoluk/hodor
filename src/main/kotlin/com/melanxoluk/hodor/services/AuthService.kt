@@ -1,7 +1,10 @@
 package com.melanxoluk.hodor.services
 
-import com.melanxoluk.hodor.common.SimpleUsernameLogin
-import com.melanxoluk.hodor.domain.*
+import com.melanxoluk.hodor.common.UsernameLogin
+import com.melanxoluk.hodor.domain.entities.AuthenticationEntry
+import com.melanxoluk.hodor.domain.entities.EmailPasswordAuthentication
+import com.melanxoluk.hodor.domain.entities.UserType
+import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository
 import com.melanxoluk.hodor.secure.PasswordHasher
 import com.melanxoluk.hodor.secure.TokenGenerator
 import com.melanxoluk.hodor.domain.repositories.*
@@ -24,7 +27,7 @@ class AuthService: Service {
 
     // ~~~ username/password flow
 
-    fun simpleUsernameLogin(login: SimpleUsernameLogin) = ok {
+    fun simpleUsernameLogin(login: UsernameLogin) = ok {
         // todo: add some validation rules here? pass length
 
         // when returned user should be available from
@@ -44,16 +47,16 @@ class AuthService: Service {
         // and check previous entry if not user
         if (newEmail) {
             emailPassAuthRepository.create(
-                EmailPasswordAuthentication(
-                    emailPasswordId = emailPass.id,
-                    token = newToken))
+                    EmailPasswordAuthentication(
+                            emailPasswordId = emailPass.id,
+                            token = newToken))
         } else {
             val authEntry = emailPassAuthRepository.findByEmailPasswordId(emailPass.id)
             if (authEntry == null) {
                 emailPassAuthRepository.create(
-                    EmailPasswordAuthentication(
-                        emailPasswordId = emailPass.id,
-                        token = newToken))
+                        EmailPasswordAuthentication(
+                                emailPasswordId = emailPass.id,
+                                token = newToken))
             } else {
                 emailPassAuthRepository.update(authEntry.copy(
                     token = newToken
@@ -142,8 +145,8 @@ class AuthService: Service {
         if (existedEntry == null) {
             authRepository
                 .create(AuthenticationEntry(
-                    userId = userId,
-                    token = newToken))
+                        userId = userId,
+                        token = newToken))
         } else {
             // update if found
             authRepository.update(existedEntry.copy(
