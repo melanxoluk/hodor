@@ -9,7 +9,7 @@ import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.Applicat
 import com.melanxoluk.hodor.domain.entities.repositories.DefaultAppRolesRepository.DefaultAppRolesTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.UsernamePasswordTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
-import com.melanxoluk.hodor.domain.entities.repositories.UsersRolesRepository.UsersRolesTable
+import com.melanxoluk.hodor.domain.entities.repositories.UserRolesRepository.UserRolesTable
 import com.melanxoluk.hodor.server.DatabaseProperties
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -29,7 +29,7 @@ object StorageContext: KoinComponent {
     private val applicationsRepository = get<AppsRepository>()
     private val appCreatorsRepository = get<AppCreatorsRepository>()
     private val appClientsRepository = get<AppClientsRepository>()
-    private val usersRolesRepository = get<UsersRolesRepository>()
+    private val usersRolesRepository = get<UserRolesRepository>()
     private val appRolesRepository = get<AppRolesRepository>()
     private val usersRepository = get<UsersRepository>()
 
@@ -52,7 +52,7 @@ object StorageContext: KoinComponent {
                 ApplicationsTable,
                 AppCreatorTable,
                 AppClientsTable,
-                UsersRolesTable,
+                UserRolesTable,
                 AppRolesTable,
                 UsersTable
             )

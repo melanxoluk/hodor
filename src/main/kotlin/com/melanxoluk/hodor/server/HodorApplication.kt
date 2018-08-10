@@ -1,16 +1,15 @@
 package com.melanxoluk.hodor.server
 
-import com.melanxoluk.hodor.secure.PasswordHasher
-import com.melanxoluk.hodor.secure.TokenGenerator
-import com.melanxoluk.hodor.server.controllers.Controller
-import com.melanxoluk.hodor.server.controllers.AuthController
-import com.melanxoluk.hodor.server.controllers.HodorUsersController
-import com.melanxoluk.hodor.server.controllers.AboutController
-import com.melanxoluk.hodor.services.AuthService
-import com.melanxoluk.hodor.services.HodorUsersService
 import com.melanxoluk.hodor.domain.StorageContext
 import com.melanxoluk.hodor.domain.entities.repositories.*
-import com.melanxoluk.hodor.domain.repositories.*
+import com.melanxoluk.hodor.secure.PasswordHasher
+import com.melanxoluk.hodor.secure.TokenGenerator
+import com.melanxoluk.hodor.server.controllers.AboutController
+import com.melanxoluk.hodor.server.controllers.AuthController
+import com.melanxoluk.hodor.server.controllers.Controller
+import com.melanxoluk.hodor.server.controllers.HodorUsersController
+import com.melanxoluk.hodor.services.AuthService
+import com.melanxoluk.hodor.services.HodorUsersService
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.application.log
@@ -75,12 +74,11 @@ object HodorApplication: KoinComponent {
         val hodorModule = applicationContext {
             // domain, repositories
             bean { UsernamePasswordsRepository() }
-            bean { EmailPasswordsAuthRepository() }
             bean { EmailPasswordsRepository() }
             bean { AppsRepository() }
             bean { AppClientsRepository() }
             bean { HodorUsersRepository() }
-            bean { UsersRolesRepository() }
+            bean { UserRolesRepository() }
             bean { AppRolesRepository() }
             bean { AppUsersRepository() }
             bean { UsersRepository() }

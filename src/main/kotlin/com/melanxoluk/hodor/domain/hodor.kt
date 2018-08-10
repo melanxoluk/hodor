@@ -41,8 +41,7 @@ var hodorSuperUser =
 var hodorApp =
     App(
         id = 0,
-        creatorId = 0,
-        name = hodorPrefix + "Hodor",
+        name = hodorPrefix,
         uuid = UUID.fromString("036b0274-f6e5-4721-a5f6-fdf0efbb8e3f"))
     internal set
 

@@ -8,7 +8,7 @@ import org.koin.standalone.get
 
 abstract class ContextRepository: KoinComponent {
     protected val usernamePasswordsRepository = get<UsernamePasswordsRepository>()
-    protected val userRolesRepository = get<UsersRolesRepository>()
+    protected val userRolesRepository = get<UserRolesRepository>()
     protected val appRolesRepository = get<AppRolesRepository>()
     protected val clientsRepository = get<AppClientsRepository>()
     protected val usersRepository = get<UsersRepository>()

@@ -5,11 +5,10 @@ import com.melanxoluk.hodor.domain.entities.*
 
 open class UsernameContext(
     val usernamePassword: UsernamePassword,
-    roles: List<AppRole>,
+    app: App,
     client: AppClient,
-    user: User,
-    app: App)
-    : UserContext(roles, client, user, app) {
+    userRolesContext: UserRolesContext)
+    : UserContext(app, client, userRolesContext) {
 
     val username get() = usernamePassword.username
     val password get() = usernamePassword.password
