@@ -1,10 +1,8 @@
 package com.melanxoluk.hodor.secure
 
-import com.melanxoluk.hodor.common.UserRequestContext
-import io.jsonwebtoken.Claims
+import com.melanxoluk.hodor.common.UsernameContext
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
-import io.jsonwebtoken.impl.crypto.MacProvider
 import org.joda.time.DateTime
 import org.koin.standalone.KoinComponent
 import java.util.*
@@ -28,11 +26,12 @@ class TokenGenerator(private val key: String): KoinComponent {
             .signWith(SignatureAlgorithm.HS512, key)
             .compact()
 
-    fun generate(context: UserRequestContext) =
+    fun generate(context: UsernameContext) =
         Jwts.builder()
             // default claims
             .setIssuedAt(Date())
-            .setSubject(context.userLogin)
+            .setExpiration(DateTime.now().plusDays(1).toDate())
+            .setSubject(context.username)
 
             // hodor specific claims
             .claim(CLIENT_CLAIM, context.clientUuid)

@@ -1,9 +1,9 @@
-package com.melanxoluk.hodor.server.storage.repositories
+package com.melanxoluk.hodor.domain.repositories
 
 import com.melanxoluk.hodor.domain.EmailPassword
-import com.melanxoluk.hodor.server.storage.CrudTable
-import com.melanxoluk.hodor.server.storage.LongCrudRepository
-import com.melanxoluk.hodor.server.storage.repositories.EmailPasswordsRepository.EmailPasswordTable
+import com.melanxoluk.hodor.domain.CrudTable
+import com.melanxoluk.hodor.domain.LongCrudRepository
+import com.melanxoluk.hodor.domain.repositories.EmailPasswordsRepository.EmailPasswordTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -14,7 +14,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class EmailPasswordsRepository: LongCrudRepository<EmailPassword, EmailPasswordTable>(EmailPasswordTable) {
     companion object EmailPasswordTable: LongIdTable("email_passwords"),
-                                     CrudTable<Long, EmailPasswordTable, EmailPassword> {
+        CrudTable<Long, EmailPasswordTable, EmailPassword> {
 
         val _hodorUser = reference("hodor_user", HodorUsersRepository.HodorUserTable)
         val _password = text("password")

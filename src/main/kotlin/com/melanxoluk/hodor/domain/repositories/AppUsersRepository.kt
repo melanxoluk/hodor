@@ -1,9 +1,9 @@
-package com.melanxoluk.hodor.server.storage.repositories
+package com.melanxoluk.hodor.domain.repositories
 
 import com.melanxoluk.hodor.domain.AppUser
-import com.melanxoluk.hodor.server.storage.CrudTable
-import com.melanxoluk.hodor.server.storage.LongCrudRepository
-import com.melanxoluk.hodor.server.storage.repositories.AppUsersRepository.AppUsersTable
+import com.melanxoluk.hodor.domain.CrudTable
+import com.melanxoluk.hodor.domain.LongCrudRepository
+import com.melanxoluk.hodor.domain.repositories.AppUsersRepository.AppUsersTable
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 class AppUsersRepository: LongCrudRepository<AppUser, AppUsersTable>(AppUsersTable) {
 
     companion object AppUsersTable: LongIdTable("app_users"),
-                                 CrudTable<Long, AppUsersTable, AppUser> {
+        CrudTable<Long, AppUsersTable, AppUser> {
 
         private val _application = long("application_id")
         private val _properties = text("properties")

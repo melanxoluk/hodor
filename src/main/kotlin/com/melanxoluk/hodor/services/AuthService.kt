@@ -1,9 +1,10 @@
-package com.melanxoluk.hodor.server.services
+package com.melanxoluk.hodor.services
 
+import com.melanxoluk.hodor.common.SimpleUsernameLogin
 import com.melanxoluk.hodor.domain.*
 import com.melanxoluk.hodor.secure.PasswordHasher
 import com.melanxoluk.hodor.secure.TokenGenerator
-import com.melanxoluk.hodor.server.storage.repositories.*
+import com.melanxoluk.hodor.domain.repositories.*
 import org.koin.standalone.get
 
 
@@ -14,45 +15,31 @@ class AuthService: Service {
         private val NOT_AUTH = "Not authenticated"
     }
 
-    private val emailPassAuthRepository = get<EmailPasswordsAuthRepository>()
-    private val emailPassRepository = get<EmailPasswordsRepository>()
+    private val usernamePasswordsRepository = get<UsernamePasswordsRepository>()
+    private val usersService = get<UsersService>()
 
-    private val hodorUsersRepository = get<HodorUsersRepository>()
-    private val appUsersRepository = get<AppUsersRepository>()
     private val passwordHasher = get<PasswordHasher>()
-    private val authRepository = get<AuthRepository>()
     private val tokenGenerator = get<TokenGenerator>()
 
 
-    // ~~~ email passwords flow
+    // ~~~ username/password flow
 
-    // returns token new token if successful or error if not
-    fun simpleUsernameLogin(username: String, password: String, client: Long) = ok {
-        // todo: add some validation rules here? pass length, email is email
+    fun simpleUsernameLogin(login: SimpleUsernameLogin) = ok {
+        // todo: add some validation rules here? pass length
 
-        var newEmail = false
-        var emailPass = emailPassRepository.findByEmail(username)
-        if (emailPass == null) {
-            newEmail = true
-
-            // need to create new regular hodor user before
-            val newHodorUser = hodorUsersRepository.create(HodorUser())
-            emailPass = emailPassRepository.create(
-                EmailPassword(
-                    email = username,
-                    password = passwordHasher.hash(password),
-                    userId = newHodorUser.id))
-        }
+        // when returned user should be available from
+        val usernamePassword = usersService.getOrCreate(login)
+        val user = usernamePassword.user!!
 
         // pass hash check
-        val consumedHash = passwordHasher.hash(password)
+        val consumedHash = passwordHasher.hash(login.password)
         val storedHash = emailPass.password
         if (consumedHash != storedHash) {
             return@ok clientError<String>(WRONG_PASSWORD)
         }
 
         // we need new token for user
-        val newToken = tokenGenerator.generate(username)
+        val newToken = tokenGenerator.generate(login.username)
 
         // and check previous entry if not user
         if (newEmail) {

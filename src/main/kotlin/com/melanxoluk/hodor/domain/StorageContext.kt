@@ -1,9 +1,9 @@
-package com.melanxoluk.hodor.server.storage
+package com.melanxoluk.hodor.domain
 
-import com.melanxoluk.hodor.domain.*
+import com.melanxoluk.hodor.domain.entities.*
 import com.melanxoluk.hodor.server.DatabaseProperties
 import com.melanxoluk.hodor.server.HodorConfig
-import com.melanxoluk.hodor.server.storage.repositories.*
+import com.melanxoluk.hodor.domain.repositories.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -13,79 +13,6 @@ import org.postgresql.Driver
 import java.util.*
 import kotlin.reflect.jvm.jvmName
 
-
-// fixme:
-//   stop to embed uuids in sources. Decide how to handle situation
-//   when after first starting app & creating that entities
-//   such uuids makes lost and run app again
-
-
-// fixme:
-//   hodor entities are belong to hodor user, user who's properties
-//   are hodor prefix. No more users should be able to has such properties
-const val hodorPrefix = "__hodor__"
-
-
-// ~~~ super user
-
-var hodorSuperUsernamePassword =
-    UsernamePassword(
-        id = 0,
-        username = HodorConfig.superUser.login,
-        password = HodorConfig.superUser.password,
-        userId = 0)
-    private set
-
-var hodorSuperUser =
-    User(
-        id = 0,
-        appId = 0,
-        properties = hodorPrefix,
-        uuid = UUID.fromString("4ccd0b37-a0d0-423c-8a2f-796d85ee8528"))
-    private set
-
-
-// ~~~ hodor app
-
-var hodorApp =
-    App(
-        id = 0,
-        creatorId = 0,
-        name = hodorPrefix + "Hodor",
-        uuid = UUID.fromString("036b0274-f6e5-4721-a5f6-fdf0efbb8e3f"))
-    private set
-
-var hodorClient =
-    AppClient(
-        id = 0,
-        appId = 0,
-        type = "web",
-        uuid = UUID.fromString("fd1c662f-b196-43a6-a914-368458c1bb83"))
-    private set
-
-
-var hodorAdminRole =
-    AppRole(
-        id = 0,
-        appId = 0,
-        uuid = UUID.fromString("9bf49948-7100-4fb6-977a-ec26cf9e8820"),
-        name = "admin")
-    private set
-
-var hodorUserRole =
-    AppRole(
-        id = 0,
-        appId = 0,
-        uuid = UUID.fromString("daf5b91b-e41f-4e2a-8b71-ace61c7dbf65"),
-        name = "user"
-    )
-    private set
-
-var hodorRoles = listOf(hodorAdminRole, hodorUserRole)
-
-
-
-// ~~~ logic to initialize storage context
 
 // todo: don't like such initialization flow, but don't know how to make better
 object StorageContext: KoinComponent {
@@ -147,7 +74,7 @@ object StorageContext: KoinComponent {
 
         hodorSuperUsernamePassword = usernamePassword
             ?: usernamePasswordsRepository.create(
-                hodorSuperUsernamePassword.copy(userId = user.id))
+            hodorSuperUsernamePassword.copy(userId = user.id))
     }
 
     private fun initHodorApp(creator: User) {
@@ -157,7 +84,7 @@ object StorageContext: KoinComponent {
 
         hodorApp = app
             ?: applicationsRepository.create(
-                hodorApp.copy(creatorId = creator.id))
+            hodorApp.copy(creatorId = creator.id))
     }
 
     private fun initHodorAppClient(app: App) {
@@ -167,7 +94,7 @@ object StorageContext: KoinComponent {
 
         hodorClient = client
             ?: appClientsRepository.create(
-                hodorClient.copy(appId = app.id))
+            hodorClient.copy(appId = app.id))
     }
 
     private fun initHodorAppRoles(user: User, app: App) {
@@ -177,14 +104,14 @@ object StorageContext: KoinComponent {
 
         hodorAdminRole = admin
             ?: appRolesRepository.create(
-                hodorAdminRole.copy(appId = app.id))
+            hodorAdminRole.copy(appId = app.id))
 
         var adminUserRole = usersRolesRepository
             .findByUserAndRole(user, hodorAdminRole)
 
         adminUserRole = adminUserRole
             ?: usersRolesRepository.create(
-                UsersRole(userId = user.id, roleId = hodorAdminRole.id))
+            UsersRole(userId = user.id, roleId = hodorAdminRole.id))
 
 
         val user =
@@ -193,7 +120,7 @@ object StorageContext: KoinComponent {
 
         hodorUserRole = user
             ?: appRolesRepository.create(
-                hodorUserRole.copy(appId = app.id))
+            hodorUserRole.copy(appId = app.id))
 
 
         hodorRoles = listOf(hodorAdminRole, hodorUserRole)

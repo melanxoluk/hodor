@@ -1,6 +1,6 @@
 package com.melanxoluk.hodor.server.controllers
 
-import com.melanxoluk.hodor.server.services.AuthService
+import com.melanxoluk.hodor.services.AuthService
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.request.receive

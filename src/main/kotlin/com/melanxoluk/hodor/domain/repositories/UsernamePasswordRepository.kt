@@ -1,10 +1,10 @@
-package com.melanxoluk.hodor.server.storage.repositories
+package com.melanxoluk.hodor.domain.repositories
 
-import com.melanxoluk.hodor.domain.User
-import com.melanxoluk.hodor.domain.UsernamePassword
-import com.melanxoluk.hodor.server.storage.CrudTable
-import com.melanxoluk.hodor.server.storage.LongCrudRepository
-import com.melanxoluk.hodor.server.storage.repositories.UsernamePasswordsRepository.UsernamePasswordTable
+import com.melanxoluk.hodor.domain.entities.User
+import com.melanxoluk.hodor.domain.entities.UsernamePassword
+import com.melanxoluk.hodor.domain.CrudTable
+import com.melanxoluk.hodor.domain.LongCrudRepository
+import com.melanxoluk.hodor.domain.repositories.UsernamePasswordsRepository.UsernamePasswordTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow

@@ -1,6 +1,6 @@
 package com.melanxoluk.hodor.server.controllers
 
-import com.melanxoluk.hodor.server.services.ServiceResult
+import com.melanxoluk.hodor.services.ServiceResult
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call

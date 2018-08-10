@@ -1,7 +1,5 @@
-package com.melanxoluk.hodor.server.services
+package com.melanxoluk.hodor.services
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.JsonAdapter
 import org.koin.standalone.KoinComponent
 
 

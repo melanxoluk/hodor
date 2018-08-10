@@ -1,7 +1,5 @@
-package com.melanxoluk.hodor.server.storage
+package com.melanxoluk.hodor.domain
 
-import com.melanxoluk.hodor.domain.Domain
-import com.melanxoluk.hodor.domain.IdDomain
 import org.jetbrains.exposed.dao.IdTable
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.*
@@ -166,4 +164,4 @@ abstract class LongCrudTable<
         name: String,
         idName: String = "id")
     : LongIdTable(name, idName),
-      CrudTable<Long, T, D>
+    CrudTable<Long, T, D>

@@ -1,16 +1,12 @@
 package com.melanxoluk.hodor.server.controllers
 
-import com.melanxoluk.hodor.server.services.HodorUsersService
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
-import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
-import org.koin.standalone.inject
 
 
 class HodorUsersController(baseUrl: String,

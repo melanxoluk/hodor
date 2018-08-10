@@ -6,12 +6,11 @@ import com.melanxoluk.hodor.server.controllers.Controller
 import com.melanxoluk.hodor.server.controllers.AuthController
 import com.melanxoluk.hodor.server.controllers.HodorUsersController
 import com.melanxoluk.hodor.server.controllers.AboutController
-import com.melanxoluk.hodor.server.services.AuthService
-import com.melanxoluk.hodor.server.services.HodorUsersService
-import com.melanxoluk.hodor.server.storage.StorageContext
-import com.melanxoluk.hodor.server.storage.repositories.*
+import com.melanxoluk.hodor.services.AuthService
+import com.melanxoluk.hodor.services.HodorUsersService
+import com.melanxoluk.hodor.domain.StorageContext
+import com.melanxoluk.hodor.domain.repositories.*
 import io.ktor.application.Application
-import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.application.log
 import io.ktor.features.CORS
@@ -21,9 +20,6 @@ import io.ktor.features.DefaultHeaders
 import io.ktor.gson.gson
 import io.ktor.http.HttpMethod
 import io.ktor.locations.Locations
-import io.ktor.response.respond
-import io.ktor.routing.get
-import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer

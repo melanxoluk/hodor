@@ -1,10 +1,10 @@
-package com.melanxoluk.hodor.server.storage.repositories
+package com.melanxoluk.hodor.domain.repositories
 
 import com.melanxoluk.hodor.domain.AuthenticationEntry
 import com.melanxoluk.hodor.domain.UserType
-import com.melanxoluk.hodor.server.storage.CrudTable
-import com.melanxoluk.hodor.server.storage.LongCrudRepository
-import com.melanxoluk.hodor.server.storage.repositories.AuthRepository.AuthenticationEntriesTable
+import com.melanxoluk.hodor.domain.CrudTable
+import com.melanxoluk.hodor.domain.LongCrudRepository
+import com.melanxoluk.hodor.domain.repositories.AuthRepository.AuthenticationEntriesTable
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
@@ -14,15 +14,15 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 class AuthRepository
     : LongCrudRepository<
     AuthenticationEntry,
-        AuthenticationEntriesTable>(
+    AuthenticationEntriesTable>(
             AuthenticationEntriesTable) {
 
     companion object AuthenticationEntriesTable
         : LongIdTable("auth_tokens"),
-          CrudTable<
-              Long,
-              AuthenticationEntriesTable,
-              AuthenticationEntry> {
+        CrudTable<
+            Long,
+            AuthenticationEntriesTable,
+            AuthenticationEntry> {
 
         private val _userType = enumeration("user_type", UserType::class.java)
         private val _userId = long("user_id")

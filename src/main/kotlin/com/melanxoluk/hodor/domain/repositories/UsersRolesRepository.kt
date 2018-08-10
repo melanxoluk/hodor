@@ -1,13 +1,13 @@
-package com.melanxoluk.hodor.server.storage.repositories
+package com.melanxoluk.hodor.domain.repositories
 
-import com.melanxoluk.hodor.domain.AppRole
-import com.melanxoluk.hodor.domain.User
-import com.melanxoluk.hodor.domain.UsersRole
-import com.melanxoluk.hodor.server.storage.LongCrudRepository
-import com.melanxoluk.hodor.server.storage.LongCrudTable
-import com.melanxoluk.hodor.server.storage.repositories.AppRolesRepository.AppRolesTable
-import com.melanxoluk.hodor.server.storage.repositories.UsersRepository.UserTable
-import com.melanxoluk.hodor.server.storage.repositories.UsersRolesRepository.UsersRolesTable
+import com.melanxoluk.hodor.domain.entities.AppRole
+import com.melanxoluk.hodor.domain.entities.User
+import com.melanxoluk.hodor.domain.entities.UsersRole
+import com.melanxoluk.hodor.domain.LongCrudRepository
+import com.melanxoluk.hodor.domain.LongCrudTable
+import com.melanxoluk.hodor.domain.repositories.AppRolesRepository.AppRolesTable
+import com.melanxoluk.hodor.domain.repositories.UsersRepository.UserTable
+import com.melanxoluk.hodor.domain.repositories.UsersRolesRepository.UsersRolesTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
