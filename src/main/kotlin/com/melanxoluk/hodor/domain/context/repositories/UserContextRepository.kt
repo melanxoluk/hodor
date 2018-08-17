@@ -15,9 +15,9 @@ class UserContextRepository: ContextRepository() {
         // client uuid -> client -> app
         // username -> usernamePassword -> user
         // user -> user roles -> app roles
-        val app = appsRepository.read(client.id)!!
+        val app = appsRepository.read(client.id)
         val usernamePassword = usernamePasswordsRepository.findByUsername(login.username)!!
-        val user = usersRepository.read(usernamePassword.id)!!
+        val user = usersRepository.read(usernamePassword.id)
         val userRolesContext = usersRolesContextRepository.get(user)
         return UserContext(app, client, userRolesContext)
     }

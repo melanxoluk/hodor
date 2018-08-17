@@ -4,6 +4,7 @@ import com.melanxoluk.hodor.domain.entities.AppRole
 import com.melanxoluk.hodor.domain.entities.App
 import com.melanxoluk.hodor.domain.LongCrudRepository
 import com.melanxoluk.hodor.domain.LongCrudTable
+import com.melanxoluk.hodor.domain.entities.DefaultAppRole
 import com.melanxoluk.hodor.domain.entities.UserRole
 import com.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRolesTable
 import org.jetbrains.exposed.dao.EntityID
@@ -44,6 +45,10 @@ class AppRolesRepository: LongCrudRepository<AppRole, AppRolesTable>(AppRolesTab
         findSingleBy { (_appId eq app.id) and (_name eq name) }
 
     fun findByUserRoles(roles: List<UserRole>) = with(roles.map { it.roleId }) {
+        findMany { id inList this@with }
+    }
+
+    fun findByAppDefaultRoles(roles: List<DefaultAppRole>) = with(roles.map { it.roleId }) {
         findMany { id inList this@with }
     }
 }

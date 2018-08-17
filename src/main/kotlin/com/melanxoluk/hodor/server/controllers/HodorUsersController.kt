@@ -1,9 +1,6 @@
 package com.melanxoluk.hodor.server.controllers
 
 import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
@@ -80,15 +77,5 @@ class HodorUsersController(baseUrl: String,
             }
 
         }
-    }
-
-
-    private suspend fun notConfirmed(call: ApplicationCall, user: EmailPassReq): Boolean {
-        if (user.email == null || user.password == null) {
-            call.respond(HttpStatusCode.BadRequest)
-            return true
-        }
-
-        return false
     }
 }

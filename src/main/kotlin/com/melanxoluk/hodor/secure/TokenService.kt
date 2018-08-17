@@ -8,7 +8,7 @@ import org.koin.standalone.KoinComponent
 import java.util.*
 
 
-class TokenGenerator(private val key: String): KoinComponent {
+class TokenService(private val key: String): KoinComponent {
     companion object {
         private const val CLIENT_CLAIM = "clt"
         private const val USER_CLAIM = "usr"
@@ -40,4 +40,10 @@ class TokenGenerator(private val key: String): KoinComponent {
 
             .signWith(SignatureAlgorithm.HS512, key)
             .compact()
+
+    fun validate(token: String): Boolean {
+        val allClaims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).body
+        // todo check timestamp
+        return true
+    }
 }

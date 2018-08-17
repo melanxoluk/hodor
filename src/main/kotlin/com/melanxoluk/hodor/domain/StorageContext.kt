@@ -5,11 +5,12 @@ import com.melanxoluk.hodor.domain.entities.repositories.*
 import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository.AppClientsTable
 import com.melanxoluk.hodor.domain.entities.repositories.AppCreatorsRepository.AppCreatorTable
 import com.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRolesTable
-import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.ApplicationsTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import com.melanxoluk.hodor.domain.entities.repositories.DefaultAppRolesRepository.DefaultAppRolesTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.UsernamePasswordTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
 import com.melanxoluk.hodor.domain.entities.repositories.UserRolesRepository.UserRolesTable
+import com.melanxoluk.hodor.secure.PasswordHasher
 import com.melanxoluk.hodor.server.DatabaseProperties
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -32,7 +33,7 @@ object StorageContext: KoinComponent {
     private val usersRolesRepository = get<UserRolesRepository>()
     private val appRolesRepository = get<AppRolesRepository>()
     private val usersRepository = get<UsersRepository>()
-
+    private val hasher = get<PasswordHasher>()
 
     fun initialize(databaseProperties: DatabaseProperties) {
         val url = String.format(postgresJdbcTemplate, databaseProperties.name)
@@ -47,14 +48,14 @@ object StorageContext: KoinComponent {
         //   with current
         transaction {
             SchemaUtils.createMissingTablesAndColumns(
-                UsernamePasswordTable,
-                DefaultAppRolesTable,
-                ApplicationsTable,
-                AppCreatorTable,
+                AppTable,
                 AppClientsTable,
-                UserRolesTable,
                 AppRolesTable,
-                UsersTable
+                UsernamePasswordTable,
+                UsersTable,
+                DefaultAppRolesTable,
+                AppCreatorTable,
+                UserRolesTable
             )
         }
 
@@ -91,6 +92,8 @@ object StorageContext: KoinComponent {
 
             appCreatorsRepository.create(
                 AppCreator(appId = app.id, userId = hodorSuperUser.id))
+        } else {
+            hodorSuperUser = hodorUser
         }
     }
 
@@ -101,7 +104,10 @@ object StorageContext: KoinComponent {
 
         hodorSuperUsernamePassword = usernamePassword
             ?: usernamePasswordsRepository.create(
-                hodorSuperUsernamePassword.copy(userId = user.id))
+                hodorSuperUsernamePassword.copy(
+                    userId = user.id,
+                    password = hasher.hash(
+                        hodorSuperUsernamePassword.password)))
     }
 
     private fun initHodorAppClient(app: App) {
@@ -141,6 +147,8 @@ object StorageContext: KoinComponent {
 
             defaultAppRolesRepository.create(
                 DefaultAppRole(appId = app.id, roleId = hodorUserRole.id))
+        } else {
+            hodorUserRole = userRole
         }
 
         hodorRoles = listOf(hodorAdminRole, hodorUserRole)

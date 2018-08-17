@@ -1,6 +1,12 @@
 package com.melanxoluk.hodor.services
 
+import com.melanxoluk.hodor.domain.context.repositories.AppContextRepository
+import com.melanxoluk.hodor.domain.context.repositories.UserContextRepository
+import com.melanxoluk.hodor.domain.context.repositories.UsernameContextRepository
+import com.melanxoluk.hodor.domain.context.repositories.UsersRolesContextRepository
+import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository
 import org.koin.standalone.KoinComponent
+import org.koin.standalone.get
 
 
 // if isOk
@@ -36,20 +42,26 @@ data class ServiceResult<T>(val isOk: Boolean = false,
     }
 }
 
-interface Service: KoinComponent {
-    fun <T> ok(action: () -> T?): ServiceResult<T> {
+abstract class Service: KoinComponent {
+    protected val usersRolesContextRepository = get<UsersRolesContextRepository>()
+    protected val usernamePasswordRepository = get<UsernamePasswordsRepository>()
+    protected val usernameContextRepository = get<UsernameContextRepository>()
+    protected val userContextRepository = get<UserContextRepository>()
+    protected val appContextRepository = get<AppContextRepository>()
+
+    fun <T> ok(action: () -> Any): ServiceResult<T> {
         return try {
             val res = action()
             if (res is ServiceResult<*>)
                 return res as ServiceResult<T>
-            ServiceResult.ok(res)
+            ServiceResult.ok(res as T)
         } catch (t: Throwable) {
             ServiceResult.serverError(t.message ?: t.javaClass.name)
         }
     }
 
-    fun <T> clientError(message: String): ServiceResult<T> {
-        return ServiceResult.clientError(message)
+    fun clientError(message: String): ServiceResult<*> {
+        return ServiceResult.clientError<Any>(message)
     }
 
     fun <T> serverError(message: String): ServiceResult<T> {

@@ -5,7 +5,7 @@ import com.melanxoluk.hodor.domain.LongCrudTable
 import com.melanxoluk.hodor.domain.entities.App
 import com.melanxoluk.hodor.domain.entities.DefaultAppRole
 import com.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRolesTable
-import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.ApplicationsTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import com.melanxoluk.hodor.domain.entities.repositories.DefaultAppRolesRepository.DefaultAppRolesTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
@@ -15,11 +15,11 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 class DefaultAppRolesRepository: LongCrudRepository<DefaultAppRole, DefaultAppRolesTable>(DefaultAppRolesTable) {
     companion object DefaultAppRolesTable: LongCrudTable<DefaultAppRolesTable, DefaultAppRole>("default_app_roles") {
 
-        private val _appId = reference("app_id", ApplicationsTable)
+        private val _appId = reference("app_id", AppTable)
         private val _roleId = reference("role_id", AppRolesTable)
 
         override val fieldsMapper: DefaultAppRole.(UpdateBuilder<Int>) -> Unit = {
-            it[_appId] = EntityID(this.appId, ApplicationsTable)
+            it[_appId] = EntityID(this.appId, AppTable)
             it[_roleId] = EntityID(this.roleId, AppRolesTable)
         }
 
@@ -34,5 +34,5 @@ class DefaultAppRolesRepository: LongCrudRepository<DefaultAppRole, DefaultAppRo
     }
 
 
-    fun findByApp(app: App) = findSingleBy { _appId eq app.id }
+    fun findByApp(app: App) = findMany { _appId eq app.id }
 }

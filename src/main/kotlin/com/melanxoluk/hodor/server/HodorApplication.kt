@@ -1,15 +1,19 @@
 package com.melanxoluk.hodor.server
 
 import com.melanxoluk.hodor.domain.StorageContext
+import com.melanxoluk.hodor.domain.context.repositories.AppContextRepository
+import com.melanxoluk.hodor.domain.context.repositories.UserContextRepository
+import com.melanxoluk.hodor.domain.context.repositories.UsernameContextRepository
+import com.melanxoluk.hodor.domain.context.repositories.UsersRolesContextRepository
 import com.melanxoluk.hodor.domain.entities.repositories.*
 import com.melanxoluk.hodor.secure.PasswordHasher
-import com.melanxoluk.hodor.secure.TokenGenerator
+import com.melanxoluk.hodor.secure.TokenService
 import com.melanxoluk.hodor.server.controllers.AboutController
 import com.melanxoluk.hodor.server.controllers.AuthController
 import com.melanxoluk.hodor.server.controllers.Controller
 import com.melanxoluk.hodor.server.controllers.HodorUsersController
-import com.melanxoluk.hodor.services.AuthService
-import com.melanxoluk.hodor.services.HodorUsersService
+import com.melanxoluk.hodor.services.SimpleLoginService
+import com.melanxoluk.hodor.services.UsersService
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.application.log
@@ -33,6 +37,10 @@ import org.koin.standalone.StandAloneContext
 // ~~~ ktor server initialization
 
 fun Application.main() {
+    // todo:
+    //   not allow validation of token
+    //   from browser
+
     // setup necessary features
     install(CORS) {
         allowCredentials = true
@@ -73,20 +81,25 @@ object HodorApplication: KoinComponent {
         // necessary app beans
         val hodorModule = applicationContext {
             // domain, repositories
-            bean { UsernamePasswordsRepository() }
-            bean { EmailPasswordsRepository() }
-            bean { AppsRepository() }
-            bean { AppClientsRepository() }
-            bean { HodorUsersRepository() }
-            bean { UserRolesRepository() }
-            bean { AppRolesRepository() }
-            bean { AppUsersRepository() }
             bean { UsersRepository() }
-            bean { AuthRepository() }
+            bean { UsernamePasswordsRepository() }
+            bean { UserRolesRepository() }
+
+            bean { AppsRepository() }
+            bean { AppCreatorsRepository() }
+            bean { AppClientsRepository() }
+            bean { DefaultAppRolesRepository() }
+            bean { AppRolesRepository() }
+
+            // context repositories
+            bean { AppContextRepository() }
+            bean { UserContextRepository() }
+            bean { UsernameContextRepository() }
+            bean { UsersRolesContextRepository() }
 
             // services
-            bean { HodorUsersService() }
-            bean { AuthService() }
+            bean { SimpleLoginService() }
+            bean { UsersService() }
 
             // controllers
             bean("allControllers") { listOf(
@@ -96,7 +109,7 @@ object HodorApplication: KoinComponent {
             }
 
             // misc
-            bean { TokenGenerator(HodorConfig.key) }
+            bean { TokenService(HodorConfig.key) }
             bean { PasswordHasher(HodorConfig.key.toByteArray()) }
         }
 
@@ -117,6 +130,3 @@ object HodorApplication: KoinComponent {
         server.start()
     }
 }
-
-
-

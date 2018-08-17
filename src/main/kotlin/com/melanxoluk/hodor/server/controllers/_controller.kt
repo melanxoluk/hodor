@@ -1,11 +1,15 @@
 package com.melanxoluk.hodor.server.controllers
 
+import com.melanxoluk.hodor.common.Result
+import com.melanxoluk.hodor.common.negative
+import com.melanxoluk.hodor.common.positive
 import com.melanxoluk.hodor.services.ServiceResult
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.pipeline.PipelineContext
+import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.route
@@ -45,9 +49,31 @@ abstract class Controller(val baseUrl: String = "",
         return true
     }
 
+    suspend fun PipelineContext<*, ApplicationCall>.assert(vararg args: Pair<Any?, String>): Boolean {
+        val iter = args.iterator()
+        while (iter.hasNext()) {
+            val pair = iter.next()
+            if (pair.first == null) {
+                call.respond(HttpStatusCode.BadRequest, pair.second)
+                return false
+            }
+        }
+
+        return true
+    }
+
     suspend fun PipelineContext<*, ApplicationCall>.ok() {
         call.respond(HttpStatusCode.OK)
     }
+
+    suspend fun PipelineContext<*, ApplicationCall>.badRequest() {
+        call.respond(HttpStatusCode.BadRequest)
+    }
+
+    suspend fun PipelineContext<*, ApplicationCall>.unauthorized() {
+        call.respond(HttpStatusCode.Unauthorized)
+    }
+
 
     suspend fun <T> PipelineContext<*, ApplicationCall>.
         respond(serviceResult: ServiceResult<T>) {
@@ -78,6 +104,21 @@ abstract class Controller(val baseUrl: String = "",
         }
     }
 
+
+    suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.parseOrNull(): T? {
+        val body = call.receiveOrNull<T>()
+        if (body == null) {
+            call.respond(HttpStatusCode.BadRequest)
+        }
+        return body
+    }
+
+    suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.parse(errorMessage: String): Result<T> {
+        val entity = call.receiveOrNull<T>()
+            ?: return negative(errorMessage)
+
+        return positive(entity)
+    }
 
     companion object {
         private val AUTH = "Authorize"

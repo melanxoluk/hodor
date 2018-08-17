@@ -4,7 +4,7 @@ import com.melanxoluk.hodor.domain.LongCrudRepository
 import com.melanxoluk.hodor.domain.LongCrudTable
 import com.melanxoluk.hodor.domain.entities.App
 import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository.AppClientsTable
-import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.ApplicationsTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -12,9 +12,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 
-class AppsRepository: LongCrudRepository<App, ApplicationsTable>(ApplicationsTable) {
+class AppsRepository: LongCrudRepository<App, AppTable>(AppTable) {
 
-    companion object ApplicationsTable: LongCrudTable<ApplicationsTable, App>("apps") {
+    companion object AppTable: LongCrudTable<AppTable, App>("apps") {
         private val _uuid = uuid("uuid")
         private val _name = text("name")
 

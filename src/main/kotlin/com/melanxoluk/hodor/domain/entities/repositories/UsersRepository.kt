@@ -5,7 +5,7 @@ import com.melanxoluk.hodor.domain.entities.UsernamePassword
 import com.melanxoluk.hodor.domain.LongCrudRepository
 import com.melanxoluk.hodor.domain.LongCrudTable
 import com.melanxoluk.hodor.domain.hodorPrefix
-import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.ApplicationsTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.*
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
 import org.jetbrains.exposed.dao.EntityID
@@ -20,12 +20,12 @@ import java.util.*
 class UsersRepository: LongCrudRepository<User, UsersTable>(UsersTable) {
     companion object UsersTable: LongCrudTable<UsersTable, User>("users") {
 
-        private val _appId = reference("app_id", ApplicationsTable)
+        private val _appId = reference("app_id", AppTable)
         private val _properties = text("properties")
         private val _uuid = uuid("uuid")
 
         override val fieldsMapper: User.(UpdateBuilder<Int>) -> Unit = {
-            it[_appId] = EntityID(this.appId, ApplicationsTable)
+            it[_appId] = EntityID(this.appId, AppTable)
             it[_properties] = this.properties
             it[_uuid] = this.uuid
         }

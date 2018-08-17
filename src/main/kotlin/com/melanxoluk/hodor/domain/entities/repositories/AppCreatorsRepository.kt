@@ -6,7 +6,7 @@ import com.melanxoluk.hodor.domain.entities.App
 import com.melanxoluk.hodor.domain.entities.AppCreator
 import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.entities.repositories.AppCreatorsRepository.AppCreatorTable
-import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.ApplicationsTable
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
@@ -16,11 +16,11 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 class AppCreatorsRepository: LongCrudRepository<AppCreator, AppCreatorTable>(AppCreatorTable) {
     companion object AppCreatorTable: LongCrudTable<AppCreatorTable, AppCreator>("app_creators") {
 
-        private val _appId = reference("app_id", ApplicationsTable)
+        private val _appId = reference("app_id", AppTable)
         private val _userId = reference("user_id", UsersTable)
 
         override val fieldsMapper: AppCreator.(UpdateBuilder<Int>) -> Unit = {
-            it[_appId] = EntityID(this.appId, ApplicationsTable)
+            it[_appId] = EntityID(this.appId, AppTable)
             it[_userId] = EntityID(this.userId, UsersTable)
         }
 

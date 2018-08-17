@@ -4,7 +4,10 @@ import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.entities.UsernamePassword
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
+import com.melanxoluk.hodor.domain.entities.AppClient
+import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.*
 import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.UsernamePasswordTable
+import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.*
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -49,4 +52,17 @@ class UsernamePasswordsRepository: LongCrudRepository<UsernamePassword, Username
     }
 
     fun findByUser(user: User) = findSingleBy { _userId eq user.id }
+
+    fun isExistsUsername(client: AppClient, username: String): Boolean {
+        var isExists = false
+        transaction {
+            // client -> app <- users <- usernames
+            val rows = table
+                .leftJoin(AppTable.leftJoin(UsersTable.leftJoin(UsernamePasswordTable)))
+                .select { UsernamePasswordTable._username eq username }
+
+            isExists = rows.count() > 0
+        }
+        return isExists
+    }
 }

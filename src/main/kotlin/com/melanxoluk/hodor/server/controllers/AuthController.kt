@@ -1,45 +1,51 @@
 package com.melanxoluk.hodor.server.controllers
 
-import com.melanxoluk.hodor.services.AuthService
+import com.melanxoluk.hodor.common.UsernameLogin
+import com.melanxoluk.hodor.secure.TokenService
+import com.melanxoluk.hodor.services.SimpleLoginService
 import io.ktor.application.Application
 import io.ktor.application.call
-import io.ktor.request.receive
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.receiveOrNull
+import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import org.koin.standalone.get
 
 
-class EmailPassReq {
-    var password: String? = null
-    var client: Long? = null
-    var email: String? = null
-}
-
+@Suppress("SENSELESS_COMPARISON")
 class AuthController(baseUrl: String,
                      app: Application): Controller(baseUrl, app) {
 
-    private val authService = get<AuthService>()
-
+    private val loginService = get<SimpleLoginService>()
+    private val tokenService = get<TokenService>()
 
     override fun routes(): Route.() -> Unit = {
         get("is_valid") {
-            token()
-            ok()
+            val token = token()
+            if (token == null) {
+                badRequest()
+                return@get
+            }
+
+            if (tokenService.validate(token)) {
+                ok()
+            } else {
+                unauthorized()
+            }
         }
 
-        // todo: provide nullable option of client token
-        // todo: to determine where from request came
         post("simple_login") {
-            val emailPassReq = call.receive<EmailPassReq>()
+            val login = parseOrNull<UsernameLogin>() ?: return@post
+            if (!assert(login.username to "username is not provided",
+                        login.password to "password is not provided",
+                        login.client to "client is not provided")) {
+                return@post
+            }
 
-            // client eq null => hodor web app
-            if (!assert(emailPassReq.email, emailPassReq.password)) return@post
-
-            /*respond(authService.simpleLogin(
-                emailPassReq.email!!,
-                emailPassReq.password!!,
-                0))*/
+            val newToken = loginService.simpleLogin(login)
+            respond(newToken)
         }
     }
 }

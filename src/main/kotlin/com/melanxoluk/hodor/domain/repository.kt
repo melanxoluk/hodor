@@ -24,7 +24,7 @@ ReadRepository<
         D>>(val table: T)
     : Repository<D> {
 
-    fun read(id: ID): D? {
+    fun read(id: ID): D {
         return table.read(id)
     }
 
@@ -130,11 +130,11 @@ interface CrudTable<
         }
     }
 
-    fun read(id: ID): D? {
+    fun read(id: ID): D {
         return transaction {
             val row = table
                 .select { table.id eq id }
-                .firstOrNull() ?: return@transaction null
+                .first()
 
             return@transaction map(row)
         }
