@@ -2,14 +2,12 @@ package com.melanxoluk.hodor.services
 
 import com.melanxoluk.hodor.common.UsernameLogin
 import com.melanxoluk.hodor.domain.context.UsernameContext
-import com.melanxoluk.hodor.domain.entities.AppClient
 import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.entities.UsernamePassword
-import com.melanxoluk.hodor.secure.PasswordHasher
 import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository
-import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository
 import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository
+import com.melanxoluk.hodor.secure.PasswordHasher
 import org.koin.standalone.get
 import java.util.*
 
@@ -17,8 +15,6 @@ import java.util.*
 class UsersService: Service() {
     private val usernamePasswordsRepository = get<UsernamePasswordsRepository>()
     private val clientsRepository = get<AppClientsRepository>()
-    private val usersRepository = get<UsersRepository>()
-    private val appsRepository = get<AppsRepository>()
     private val passwordHasher = get<PasswordHasher>()
 
     fun getOrCreate(login: UsernameLogin): UsernamePassword {

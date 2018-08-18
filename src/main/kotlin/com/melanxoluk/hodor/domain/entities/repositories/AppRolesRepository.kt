@@ -41,6 +41,9 @@ class AppRolesRepository: LongCrudRepository<AppRole, AppRolesTable>(AppRolesTab
 
     fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
 
+    fun findByApp(app: App) =
+        findMany { _appId eq app.id }
+
     fun findByAppAndName(app: App, name: String) =
         findSingleBy { (_appId eq app.id) and (_name eq name) }
 

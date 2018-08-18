@@ -2,12 +2,10 @@ package com.melanxoluk.hodor.server.controllers
 
 import com.melanxoluk.hodor.common.UsernameLogin
 import com.melanxoluk.hodor.secure.TokenService
+import com.melanxoluk.hodor.services.ServiceResult
 import com.melanxoluk.hodor.services.SimpleLoginService
+import com.melanxoluk.hodor.services.Token
 import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.request.receiveOrNull
-import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -29,8 +27,24 @@ class AuthController(baseUrl: String,
                 return@get
             }
 
-            if (tokenService.validate(token)) {
+            if (tokenService.isValidExpiration(token)) {
                 ok()
+            } else {
+                unauthorized()
+            }
+        }
+
+        get("refresh") {
+            val token = token()
+            if (token == null) {
+                badRequest()
+                return@get
+            }
+
+            if (tokenService.isValidExpiration(token)) {
+                val refreshed = tokenService.refresh(token)
+                val tokenRes = Token(refreshed)
+                respond(ServiceResult.ok(tokenRes))
             } else {
                 unauthorized()
             }

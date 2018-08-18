@@ -8,10 +8,9 @@ import com.melanxoluk.hodor.domain.context.repositories.UsersRolesContextReposit
 import com.melanxoluk.hodor.domain.entities.repositories.*
 import com.melanxoluk.hodor.secure.PasswordHasher
 import com.melanxoluk.hodor.secure.TokenService
-import com.melanxoluk.hodor.server.controllers.AboutController
-import com.melanxoluk.hodor.server.controllers.AuthController
-import com.melanxoluk.hodor.server.controllers.Controller
-import com.melanxoluk.hodor.server.controllers.HodorUsersController
+import com.melanxoluk.hodor.server.controllers.*
+import com.melanxoluk.hodor.services.AppsService
+import com.melanxoluk.hodor.services.ClientsService
 import com.melanxoluk.hodor.services.SimpleLoginService
 import com.melanxoluk.hodor.services.UsersService
 import io.ktor.application.Application
@@ -99,13 +98,16 @@ object HodorApplication: KoinComponent {
 
             // services
             bean { SimpleLoginService() }
+            bean { ClientsService() }
             bean { UsersService() }
+            bean { AppsService() }
 
             // controllers
             bean("allControllers") { listOf(
-                HodorUsersController(it["baseUrl"], it["app"]),
                 AboutController(it["baseUrl"], it["app"]),
-                AuthController(it["baseUrl"], it["app"]))
+                AuthController(it["baseUrl"], it["app"]),
+                AppsController(it["baseUrl"], it["app"]),
+                ClientsController(it["baseUrl"], it["app"]))
             }
 
             // misc

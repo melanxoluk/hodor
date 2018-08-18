@@ -113,7 +113,7 @@ object StorageContext: KoinComponent {
     private fun initHodorAppClient(app: App) {
         val client =
             appClientsRepository
-                .findByApp(app)
+                .findByAppAndType(app, hodorClient.type)
 
         hodorClient = client
             ?: appClientsRepository.create(

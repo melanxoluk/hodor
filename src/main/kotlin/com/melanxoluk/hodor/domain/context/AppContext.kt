@@ -10,4 +10,5 @@ class AppContext(
     val app: App,
     val creator: User,
     val appCreator: AppCreator,
-    val defaultRoles: List<AppRole>)
+    val defaultRoles: List<AppRole>,
+    val roles: List<AppRole>)

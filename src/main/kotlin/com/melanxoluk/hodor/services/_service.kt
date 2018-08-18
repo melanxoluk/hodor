@@ -4,7 +4,7 @@ import com.melanxoluk.hodor.domain.context.repositories.AppContextRepository
 import com.melanxoluk.hodor.domain.context.repositories.UserContextRepository
 import com.melanxoluk.hodor.domain.context.repositories.UsernameContextRepository
 import com.melanxoluk.hodor.domain.context.repositories.UsersRolesContextRepository
-import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository
+import com.melanxoluk.hodor.domain.entities.repositories.*
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
 
@@ -40,9 +40,28 @@ data class ServiceResult<T>(val isOk: Boolean = false,
         fun <T> clientError(msg: String) = ServiceResult<T>(false, true, false, msg, null)
         fun <T> ok(result: T?) = ServiceResult(true, result = result)
     }
+
+    fun map(f: (T) -> Any): ServiceResult<*> {
+        return if (isOk) {
+            ServiceResult.ok(f(result!!))
+        } else {
+            this
+        }
+    }
+
+
 }
 
 abstract class Service: KoinComponent {
+    protected val defaultAppRolesRepository = get<DefaultAppRolesRepository>()
+    protected val appCreatorsRepository = get<AppCreatorsRepository>()
+    protected val appClientsRepository = get<AppClientsRepository>()
+    protected val appRoleRepository = get<AppRolesRepository>()
+    protected val appsRepository = get<AppsRepository>()
+
+    protected val userRolesRepository = get<UserRolesRepository>()
+    protected val usersRepository = get<UsersRepository>()
+
     protected val usersRolesContextRepository = get<UsersRolesContextRepository>()
     protected val usernamePasswordRepository = get<UsernamePasswordsRepository>()
     protected val usernameContextRepository = get<UsernameContextRepository>()

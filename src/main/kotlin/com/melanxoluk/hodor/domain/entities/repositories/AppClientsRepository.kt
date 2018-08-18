@@ -8,6 +8,7 @@ import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository.AppClientsTable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import java.util.*
 
@@ -39,5 +40,8 @@ class AppClientsRepository: LongCrudRepository<AppClient, AppClientsTable>(AppCl
 
     fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
 
-    fun findByApp(app: App) = findSingleBy { _appId eq app.id }
+    fun findByApp(app: App) = findMany { _appId eq app.id }
+
+    fun findByAppAndType(app: App, type: String)
+        = findSingleBy { (_appId eq app.id) and (_type eq type) }
 }
