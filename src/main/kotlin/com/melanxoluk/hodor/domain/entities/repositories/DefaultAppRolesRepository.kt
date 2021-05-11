@@ -7,7 +7,7 @@ import com.melanxoluk.hodor.domain.entities.DefaultAppRole
 import com.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRolesTable
 import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import com.melanxoluk.hodor.domain.entities.repositories.DefaultAppRolesRepository.DefaultAppRolesTable
-import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 

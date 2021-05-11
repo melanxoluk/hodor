@@ -2,7 +2,7 @@
 
 create table users(
   id bigserial primary key,
-  uuid UUID,
+  uuid UUID unique,
   properties text,
   app_id bigint
 );
@@ -19,7 +19,7 @@ create table username_passwords(
 
 create table apps(
   id bigserial primary key,
-  uuid UUID,
+  uuid UUID unique,
   name varchar(50),
   creator_id bigint
 );
@@ -29,14 +29,14 @@ alter table apps add foreign key (creator_id) references users(id);
 
 create table app_clients(
   id bigserial primary key,
-  uuid UUID,
+  uuid UUID unique,
   type text,
   app_id bigint references apps(id)
 );
 
 create table app_roles (
   id bigserial primary key,
-  uuid UUID,
+  uuid UUID unique,
   name text,
   app_id bigint references apps
 );

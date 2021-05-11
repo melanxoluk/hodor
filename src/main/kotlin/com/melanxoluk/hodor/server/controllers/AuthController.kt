@@ -9,7 +9,7 @@ import io.ktor.application.Application
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
-import org.koin.standalone.get
+import org.koin.core.component.get
 
 
 @Suppress("SENSELESS_COMPARISON")
@@ -44,7 +44,7 @@ class AuthController(baseUrl: String,
             if (tokenService.isValidExpiration(token)) {
                 val refreshed = tokenService.refresh(token)
                 val tokenRes = Token(refreshed)
-                respond(ServiceResult.ok(tokenRes))
+                this.respond(ServiceResult.ok(tokenRes))
             } else {
                 unauthorized()
             }
@@ -59,7 +59,7 @@ class AuthController(baseUrl: String,
             }
 
             val newToken = loginService.simpleLogin(login)
-            respond(newToken)
+            this.respond(newToken)
         }
     }
 }

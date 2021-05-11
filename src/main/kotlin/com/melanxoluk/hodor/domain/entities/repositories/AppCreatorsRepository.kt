@@ -8,7 +8,7 @@ import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.entities.repositories.AppCreatorsRepository.AppCreatorTable
 import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
-import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 

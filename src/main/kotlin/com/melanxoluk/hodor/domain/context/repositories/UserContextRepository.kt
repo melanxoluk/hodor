@@ -3,8 +3,7 @@ package com.melanxoluk.hodor.domain.context.repositories
 import com.melanxoluk.hodor.common.UsernameLogin
 import com.melanxoluk.hodor.domain.context.UserContext
 import com.melanxoluk.hodor.secure.TokenService
-import org.koin.standalone.get
-
+import org.koin.core.component.get
 
 class UserContextRepository: ContextRepository() {
     private val usersRolesContextRepository = get<UsersRolesContextRepository>()

@@ -6,7 +6,7 @@ import io.ktor.application.call
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
-import org.koin.standalone.get
+import org.koin.core.component.get
 import java.util.*
 
 
@@ -24,7 +24,7 @@ class ClientsController(baseUrl: String,
             val userContext = validateHodor() ?: return@get
             val sAppUuid = call.parameters["uuid"]
             val appUuid = UUID.fromString(sAppUuid)
-            respond(clientsService.getAll(appUuid))
+            this.respond(clientsService.getAll(appUuid))
         }
 
         post("apps/{uuid}/clients") {
@@ -36,7 +36,7 @@ class ClientsController(baseUrl: String,
             val sAppUuid = call.parameters["uuid"]
             val appUuid = UUID.fromString(sAppUuid)
 
-            respond(clientsService.create(appUuid, newClient.type))
+            this.respond(clientsService.create(appUuid, newClient.type))
         }
     }
 }

@@ -4,11 +4,11 @@ package com.melanxoluk.hodor.common
 // way to receive npe is always exists, but use it like in example
 // will help to use !! which could raise it
 
-interface Result<T>
+sealed class Result<T>
 
-class Positive<T>(var body: T): Result<T>
+class Positive<T>(var body: T): Result<T>()
 
-class Negative<T>(var exceptionMessage: String): Result<T>
+class Negative<T>(var exceptionMessage: String): Result<T>()
 
 
 fun <T> positive(entity: T) = Positive(entity)

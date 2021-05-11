@@ -1,7 +1,7 @@
 package com.melanxoluk.hodor.domain
 
 import com.melanxoluk.hodor.domain.entities.*
-import com.melanxoluk.hodor.server.HodorConfig
+import com.melanxoluk.hodor.HodorConfig
 import java.util.*
 
 

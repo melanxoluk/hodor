@@ -9,7 +9,7 @@ import io.ktor.application.Application
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
-import org.koin.standalone.get
+import org.koin.core.component.get
 
 
 private class NewApp(val name: String)
@@ -42,7 +42,7 @@ class AppsController(baseUrl: String,
         get("apps") {
             val userContext = validateHodor() ?: return@get
             val apps = appsService.getAll(userContext)
-            respond(apps.map { appContexts ->
+            this.respond(apps.map { appContexts ->
                 AppResp.create(appContexts)
             })
         }
@@ -54,7 +54,7 @@ class AppsController(baseUrl: String,
                 return@post
             }
 
-            respond(appsService
+            this.respond(appsService
                 .create(userContext, newApp.name)
                 .map { context -> AppResp(context) })
         }

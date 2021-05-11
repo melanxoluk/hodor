@@ -12,21 +12,21 @@ import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.pipeline.PipelineContext
 import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
+import io.ktor.util.pipeline.PipelineContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.slf4j.LoggerFactory
 
 
 abstract class Controller(val baseUrl: String = "",
                           val app: Application): HasRouting, KoinComponent {
     companion object {
-        private const val AUTH = "Auth"
+        private const val AUTH = "Authorization"
         private val log = LoggerFactory.getLogger(Controller::class.java)
     }
 
@@ -128,9 +128,7 @@ abstract class Controller(val baseUrl: String = "",
     }
 
 
-    suspend fun <T> PipelineContext<*, ApplicationCall>.
-        respond(serviceResult: ServiceResult<T>) {
-
+    suspend fun <T> PipelineContext<*, ApplicationCall>.respond(serviceResult: ServiceResult<T>) {
         when {
             serviceResult.isOk -> {
                 call.respond(serviceResult)

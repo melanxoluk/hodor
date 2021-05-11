@@ -6,7 +6,7 @@ import com.melanxoluk.hodor.domain.entities.HodorUserType
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
 import com.melanxoluk.hodor.domain.entities.repositories.HodorUsersRepository.HodorUserTable
-import org.jetbrains.exposed.dao.LongIdTable
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -17,7 +17,7 @@ class HodorUsersRepository: LongCrudRepository<HodorUser, HodorUserTable>(HodorU
     companion object HodorUserTable: LongIdTable("hodor_users"),
         CrudTable<Long, HodorUserTable, HodorUser> {
 
-        private val _userType = enumeration("user_type", HodorUserType::class.java)
+        private val _userType = enumeration("user_type", HodorUserType::class)
 
         override val fieldsMapper: HodorUser.(UpdateBuilder<Int>) -> Unit = {
             it[_userType] = this.userType

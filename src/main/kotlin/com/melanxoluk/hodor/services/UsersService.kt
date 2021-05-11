@@ -8,7 +8,7 @@ import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository
 import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository
 import com.melanxoluk.hodor.secure.PasswordHasher
-import org.koin.standalone.get
+import org.koin.core.component.get
 import java.util.*
 
 

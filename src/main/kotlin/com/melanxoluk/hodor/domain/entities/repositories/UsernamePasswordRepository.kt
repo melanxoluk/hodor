@@ -8,8 +8,8 @@ import com.melanxoluk.hodor.domain.entities.AppClient
 import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.*
 import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.UsernamePasswordTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.*
-import org.jetbrains.exposed.dao.EntityID
-import org.jetbrains.exposed.dao.LongIdTable
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder

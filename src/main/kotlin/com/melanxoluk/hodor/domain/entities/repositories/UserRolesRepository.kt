@@ -8,7 +8,7 @@ import com.melanxoluk.hodor.domain.LongCrudTable
 import com.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRolesTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
 import com.melanxoluk.hodor.domain.entities.repositories.UserRolesRepository.UserRolesTable
-import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.statements.UpdateBuilder

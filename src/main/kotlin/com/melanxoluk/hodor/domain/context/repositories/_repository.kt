@@ -2,8 +2,8 @@ package com.melanxoluk.hodor.domain.context.repositories
 
 import com.melanxoluk.hodor.domain.entities.repositories.*
 import com.melanxoluk.hodor.secure.PasswordHasher
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 
 abstract class ContextRepository: KoinComponent {

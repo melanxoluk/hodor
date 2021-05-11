@@ -5,8 +5,8 @@ import com.melanxoluk.hodor.domain.context.repositories.UserContextRepository
 import com.melanxoluk.hodor.domain.context.repositories.UsernameContextRepository
 import com.melanxoluk.hodor.domain.context.repositories.UsersRolesContextRepository
 import com.melanxoluk.hodor.domain.entities.repositories.*
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 
 // if isOk
@@ -27,11 +27,12 @@ data class UnitServiceResult(val isOk: Boolean = false,
 // if isOk
 //   result != null
 //   errorMessage = null
-data class ServiceResult<T>(val isOk: Boolean = false,
-                            @Transient val isClientError: Boolean = false,
-                            @Transient val isServerError: Boolean = false,
-                            val errorMessage: String? = null,
-                            val result: T? = null) {
+data class ServiceResult<out T>(
+    val isOk: Boolean = false,
+    @Transient val isClientError: Boolean = false,
+    @Transient val isServerError: Boolean = false,
+    val errorMessage: String? = null,
+    val result: T? = null) {
 
     val isError get() = !isOk
 
@@ -43,13 +44,11 @@ data class ServiceResult<T>(val isOk: Boolean = false,
 
     fun map(f: (T) -> Any): ServiceResult<*> {
         return if (isOk) {
-            ServiceResult.ok(f(result!!))
+            ok(f(result!!))
         } else {
             this
         }
     }
-
-
 }
 
 abstract class Service: KoinComponent {

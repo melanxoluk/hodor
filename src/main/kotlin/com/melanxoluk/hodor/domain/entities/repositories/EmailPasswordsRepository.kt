@@ -4,8 +4,8 @@ import com.melanxoluk.hodor.domain.entities.EmailPassword
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
 import com.melanxoluk.hodor.domain.entities.repositories.EmailPasswordsRepository.EmailPasswordTable
-import org.jetbrains.exposed.dao.EntityID
-import org.jetbrains.exposed.dao.LongIdTable
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder

@@ -6,7 +6,7 @@ import com.melanxoluk.hodor.common.UsernameLogin
 import com.melanxoluk.hodor.domain.context.UsernameContext
 import com.melanxoluk.hodor.secure.PasswordHasher
 import com.melanxoluk.hodor.secure.TokenService
-import org.koin.standalone.get
+import org.koin.core.component.get
 
 
 class Token(val token: String)

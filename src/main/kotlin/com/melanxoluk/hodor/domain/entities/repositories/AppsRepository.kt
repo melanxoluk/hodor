@@ -26,10 +26,7 @@ class AppsRepository: LongCrudRepository<App, AppTable>(AppTable) {
         override val table = this
 
         override fun map(row: ResultRow) =
-            App(
-                row[id].value,
-                row[_name],
-                row[_uuid])
+            App(row[id].value, row[_name], row[_uuid])
     }
 
 

@@ -8,7 +8,7 @@ import com.melanxoluk.hodor.domain.entities.User
 import com.melanxoluk.hodor.domain.entities.UserRole
 import com.melanxoluk.hodor.domain.entities.UsernamePassword
 import com.melanxoluk.hodor.secure.PasswordHasher
-import org.koin.standalone.get
+import org.koin.core.component.get
 import java.util.*
 
 

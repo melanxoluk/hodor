@@ -1,5 +1,6 @@
 package com.melanxoluk.hodor.domain
 
+import com.melanxoluk.hodor.DatabaseProperties
 import com.melanxoluk.hodor.domain.entities.*
 import com.melanxoluk.hodor.domain.entities.repositories.*
 import com.melanxoluk.hodor.domain.entities.repositories.AppClientsRepository.AppClientsTable
@@ -7,16 +8,15 @@ import com.melanxoluk.hodor.domain.entities.repositories.AppCreatorsRepository.A
 import com.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRolesTable
 import com.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import com.melanxoluk.hodor.domain.entities.repositories.DefaultAppRolesRepository.DefaultAppRolesTable
+import com.melanxoluk.hodor.domain.entities.repositories.UserRolesRepository.UserRolesTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsernamePasswordsRepository.UsernamePasswordTable
 import com.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
-import com.melanxoluk.hodor.domain.entities.repositories.UserRolesRepository.UserRolesTable
 import com.melanxoluk.hodor.secure.PasswordHasher
-import com.melanxoluk.hodor.server.DatabaseProperties
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.postgresql.Driver
 import kotlin.reflect.jvm.jvmName
 
@@ -38,10 +38,9 @@ object StorageContext: KoinComponent {
     fun initialize(databaseProperties: DatabaseProperties) {
         val url = String.format(postgresJdbcTemplate, databaseProperties.name)
         Database.connect(
-            url,
-            Driver::class.jvmName,
-            databaseProperties.user,
-            databaseProperties.password)
+            url = url,
+            user = databaseProperties.user,
+            password = databaseProperties.password)
 
         // todo:
         //   need validation mechanism to check exists database scheme

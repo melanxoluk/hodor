@@ -1,4 +1,4 @@
-package com.melanxoluk.hodor.server
+package com.melanxoluk.hodor
 
 import com.melanxoluk.hodor.domain.StorageContext
 import com.melanxoluk.hodor.domain.context.repositories.AppContextRepository
@@ -22,15 +22,20 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.gson.gson
 import io.ktor.http.HttpMethod
+import io.ktor.http.parametersOf
 import io.ktor.locations.Locations
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import org.koin.dsl.module.applicationContext
+import io.netty.handler.ssl.ApplicationProtocolConfig
+import org.koin.core.KoinApplication
+import org.koin.core.component.KoinComponent
+import org.koin.core.parameter.parametersOf
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
+import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.StandAloneContext
 
 
 // ~~~ ktor server initialization
@@ -48,6 +53,43 @@ fun Application.main() {
         anyHost()
     }
 
+    install(Koin) {
+        modules(module {
+            single { UsersRepository() }
+            single { UsernamePasswordsRepository() }
+            single { UserRolesRepository() }
+
+            single { AppsRepository() }
+            single { AppCreatorsRepository() }
+            single { AppClientsRepository() }
+            single { DefaultAppRolesRepository() }
+            single { AppRolesRepository() }
+
+            // context repositories
+            single { AppContextRepository() }
+            single { UserContextRepository() }
+            single { UsernameContextRepository() }
+            single { UsersRolesContextRepository() }
+
+            // services
+            single { SimpleLoginService() }
+            single { ClientsService() }
+            single { UsersService() }
+            single { AppsService() }
+
+            // controllers
+            single{ listOf(
+                AboutController(it[0], it[1]),
+                AuthController(it[0], it[1]),
+                AppsController(it[0], it[1]),
+                ClientsController(it[0], it[1]))
+            }
+
+            // misc
+            single { TokenService(HodorConfig.key) }
+            single { PasswordHasher(HodorConfig.key.toByteArray()) }
+        })
+    }
     install(Locations)
     install(CallLogging)
     install(DefaultHeaders)
@@ -63,12 +105,12 @@ fun Application.main() {
         trace { application.log.info(it.buildText()) }
     }
 
+    // init storage
+    StorageContext.initialize(HodorConfig.databaseProperties)
 
     // initialize routing controllers
     get<List<Controller>>(parameters = {
-        mapOf(
-            "baseUrl" to "/api/v1",
-            "app" to this)
+        parametersOf("/api/v1", this)
     })
 }
 
@@ -76,54 +118,8 @@ fun Application.main() {
 // ~~~ entry point with base initializations
 
 object HodorApplication: KoinComponent {
-    init {
-        // necessary app beans
-        val hodorModule = applicationContext {
-            // domain, repositories
-            bean { UsersRepository() }
-            bean { UsernamePasswordsRepository() }
-            bean { UserRolesRepository() }
-
-            bean { AppsRepository() }
-            bean { AppCreatorsRepository() }
-            bean { AppClientsRepository() }
-            bean { DefaultAppRolesRepository() }
-            bean { AppRolesRepository() }
-
-            // context repositories
-            bean { AppContextRepository() }
-            bean { UserContextRepository() }
-            bean { UsernameContextRepository() }
-            bean { UsersRolesContextRepository() }
-
-            // services
-            bean { SimpleLoginService() }
-            bean { ClientsService() }
-            bean { UsersService() }
-            bean { AppsService() }
-
-            // controllers
-            bean("allControllers") { listOf(
-                AboutController(it["baseUrl"], it["app"]),
-                AuthController(it["baseUrl"], it["app"]),
-                AppsController(it["baseUrl"], it["app"]),
-                ClientsController(it["baseUrl"], it["app"]))
-            }
-
-            // misc
-            bean { TokenService(HodorConfig.key) }
-            bean { PasswordHasher(HodorConfig.key.toByteArray()) }
-        }
-
-        // start di
-        StandAloneContext.startKoin(listOf(hodorModule))
-    }
-
     @JvmStatic
     fun main(args: Array<String>) {
-        // init storage
-        StorageContext.initialize(HodorConfig.databaseProperties)
-
         // start ktor, should apply app.conf params & continue
         // bootstrapping in App.main function which is higher
         val server = embeddedServer(Netty, commandLineEnvironment(args))

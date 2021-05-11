@@ -1,6 +1,6 @@
 package com.melanxoluk.hodor.secure
 
-import org.koin.standalone.KoinComponent
+import org.koin.core.component.KoinComponent
 import java.security.MessageDigest
 
 

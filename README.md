@@ -1,3 +1,9 @@
+### Requirements
+- username/password register by app id
+- username/password login by app id
+- save user data
+
+
 ## About
 
 Hodor is service which helps to simplify users auth flows for

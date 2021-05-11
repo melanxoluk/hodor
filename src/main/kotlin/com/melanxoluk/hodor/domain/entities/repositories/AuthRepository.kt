@@ -5,7 +5,7 @@ import com.melanxoluk.hodor.domain.entities.UserType
 import com.melanxoluk.hodor.domain.CrudTable
 import com.melanxoluk.hodor.domain.LongCrudRepository
 import com.melanxoluk.hodor.domain.entities.repositories.AuthRepository.AuthenticationEntriesTable
-import org.jetbrains.exposed.dao.LongIdTable
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -24,7 +24,7 @@ class AuthRepository
             AuthenticationEntriesTable,
             AuthenticationEntry> {
 
-        private val _userType = enumeration("user_type", UserType::class.java)
+        private val _userType = enumeration("user_type", UserType::class)
         private val _userId = long("user_id")
         private val _token = text("token")
 
