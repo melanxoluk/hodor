@@ -23,7 +23,8 @@ class UsersService: Service() {
 
     fun get(login: UsernameLogin): UsernamePassword? {
         // find client by uuid
-        val client = clientsRepository.findByUuid(login.client)
+        // fixme
+        val client = clientsRepository.findByUuid(login.client).getOrNull()
             ?: return null
 
         // find user by app_id in client with username

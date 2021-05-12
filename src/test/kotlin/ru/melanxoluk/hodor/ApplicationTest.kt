@@ -15,9 +15,39 @@ class ApplicationTest {
     private val mapper = jacksonObjectMapper()
 
     @Test
-    fun testAbout() = withTestApplication(Application::main) {
+    fun aboutTest() = withTestApplication(Application::main) {
         with(handleRequest(HttpMethod.Get, "/api/v1/about")) {
             assertEquals(AboutController.about, mapper.readValue(response.content!!))
         }
+    }
+
+
+    @Test
+    fun createHodorUserTest() = withTestApplication(Application::main) {
+
+    }
+
+
+    @Test
+    fun createApplicationTest() = withTestApplication(Application::main) {
+
+    }
+
+
+    @Test
+    fun createClientTest() = withTestApplication(Application::main) {
+
+    }
+
+
+    @Test
+    fun registerUserTest() = withTestApplication(Application::main) {
+
+    }
+
+
+    @Test
+    fun loginUserTest() = withTestApplication(Application::main) {
+
     }
 }

@@ -14,6 +14,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.melanxoluk.hodor.common.notFoundResult
 
 
 class UsernamePasswordsRepository: LongCrudRepository<UsernamePassword, UsernamePasswordTable>(UsernamePasswordTable) {
@@ -42,13 +43,13 @@ class UsernamePasswordsRepository: LongCrudRepository<UsernamePassword, Username
     }
 
 
-    fun findByUsername(username: String): UsernamePassword? = with(table) {
-        return transaction {
+    fun findByUsername(username: String): Result<UsernamePassword> = with(table) {
+        return notFoundResult(transaction {
             return@transaction table
                 .select { _username eq username }
                 .singleOrNull()
                 ?.let { map(it) }
-        }
+        })
     }
 
     fun findByUser(user: User) = findSingleBy { _userId eq user.id }

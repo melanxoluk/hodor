@@ -1,15 +1,17 @@
 package ru.melanxoluk.hodor.server.controllers
 
+import io.ktor.application.Application
+import io.ktor.application.ApplicationCall
+import io.ktor.routing.Route
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.util.pipeline.PipelineContext
+import org.koin.core.component.get
 import ru.melanxoluk.hodor.common.UsernameLogin
 import ru.melanxoluk.hodor.secure.TokenService
 import ru.melanxoluk.hodor.services.ServiceResult
 import ru.melanxoluk.hodor.services.SimpleLoginService
 import ru.melanxoluk.hodor.services.Token
-import io.ktor.application.Application
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.post
-import org.koin.core.component.get
 
 
 @Suppress("SENSELESS_COMPARISON")
@@ -50,16 +52,23 @@ class AuthController(baseUrl: String,
             }
         }
 
-        post("simple_login") {
-            val login = parseOrNull<UsernameLogin>() ?: return@post
-            if (!assert(login.username to "username is not provided",
-                        login.password to "password is not provided",
-                        login.client to "client is not provided")) {
-                return@post
-            }
+        suspend fun PipelineContext<*, ApplicationCall>.assertLogin(login: UsernameLogin) = login.also {
+            assert(
+                login.username to "'username' is not provided",
+                login.password to "'password' is not provided",
+                login.client to "'client' is not provided"
+            )
+        }
 
+        post("simple_login") {
+            val login = assertLogin(parse())
             val newToken = loginService.simpleLogin(login)
-            this.respond(newToken)
+            respond(newToken)
+        }
+
+        post("register") {
+            val login = assertLogin(parse())
+
         }
     }
 }

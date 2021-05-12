@@ -110,13 +110,10 @@ object StorageContext: KoinComponent {
     }
 
     private fun initHodorAppClient(app: App) {
-        val client =
-            appClientsRepository
-                .findByAppAndType(app, hodorClient.type)
-
-        hodorClient = client
-            ?: appClientsRepository.create(
-                hodorClient.copy(appId = app.id))
+        appClientsRepository
+            .findByAppAndType(app, hodorClient.type)
+            .onSuccess { client -> hodorClient = client }
+            .onFailure { hodorClient = appClientsRepository.create(hodorClient.copy(appId = app.id)) }
     }
 
     private fun initHodorAppRoles(user: User, app: App) {

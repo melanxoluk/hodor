@@ -10,6 +10,8 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import ru.melanxoluk.hodor.common.notFoundResult
+import ru.melanxoluk.hodor.common.result
 import java.util.*
 
 
@@ -38,10 +40,13 @@ class AppClientsRepository: LongCrudRepository<AppClient, AppClientsTable>(AppCl
     }
 
 
-    fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
+    fun findByUuid(uuid: UUID) = notFoundResult(
+        findSingleBy { _uuid eq uuid }
+    )
 
     fun findByApp(app: App) = findMany { _appId eq app.id }
 
-    fun findByAppAndType(app: App, type: String)
-        = findSingleBy { (_appId eq app.id) and (_type eq type) }
+    fun findByAppAndType(app: App, type: String) = notFoundResult(
+        findSingleBy { (_appId eq app.id) and (_type eq type) }
+    )
 }

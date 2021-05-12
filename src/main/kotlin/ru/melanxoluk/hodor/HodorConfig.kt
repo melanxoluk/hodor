@@ -6,15 +6,15 @@ import io.github.config4k.extract
 
 object HodorConfig {
     val key: String
-    val superUser: ru.melanxoluk.hodor.SuperUser
-    val databaseProperties: ru.melanxoluk.hodor.DatabaseProperties
+    val superUser: SuperUser
+    val databaseProperties: DatabaseProperties
 
     init {
         val config = ConfigFactory.load()
 
-        ru.melanxoluk.hodor.HodorConfig.key = config.extract("key")
-        ru.melanxoluk.hodor.HodorConfig.superUser = config.extract("super-user")
-        ru.melanxoluk.hodor.HodorConfig.databaseProperties = config.extract("database")
+        key = config.extract("key")
+        superUser = config.extract("super-user")
+        databaseProperties = config.extract("database")
     }
 }
 

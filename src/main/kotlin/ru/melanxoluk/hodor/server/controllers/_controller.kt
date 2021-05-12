@@ -1,13 +1,5 @@
 package ru.melanxoluk.hodor.server.controllers
 
-import ru.melanxoluk.hodor.common.Result
-import ru.melanxoluk.hodor.common.negative
-import ru.melanxoluk.hodor.common.positive
-import ru.melanxoluk.hodor.domain.context.UserContext
-import ru.melanxoluk.hodor.domain.context.repositories.UserContextRepository
-import ru.melanxoluk.hodor.domain.hodorApp
-import ru.melanxoluk.hodor.secure.TokenService
-import ru.melanxoluk.hodor.services.ServiceResult
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -21,6 +13,11 @@ import io.ktor.util.pipeline.PipelineContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.slf4j.LoggerFactory
+import ru.melanxoluk.hodor.domain.context.UserContext
+import ru.melanxoluk.hodor.domain.context.repositories.UserContextRepository
+import ru.melanxoluk.hodor.domain.hodorApp
+import ru.melanxoluk.hodor.secure.TokenService
+import ru.melanxoluk.hodor.services.ServiceResult
 
 
 abstract class Controller(val baseUrl: String = "",
@@ -102,17 +99,15 @@ abstract class Controller(val baseUrl: String = "",
         return true
     }
 
-    suspend fun PipelineContext<*, ApplicationCall>.assert(vararg args: Pair<Any?, String>): Boolean {
+    suspend fun PipelineContext<*, ApplicationCall>.assert(vararg args: Pair<Any?, String>) {
         val iter = args.iterator()
         while (iter.hasNext()) {
             val pair = iter.next()
             if (pair.first == null) {
                 call.respond(HttpStatusCode.BadRequest, pair.second)
-                return false
+                throw IllegalStateException("Assertion failed: ${pair.second}")
             }
         }
-
-        return true
     }
 
     suspend fun PipelineContext<*, ApplicationCall>.ok() {
@@ -155,20 +150,36 @@ abstract class Controller(val baseUrl: String = "",
         }
     }
 
+    suspend fun <T> PipelineContext<*, ApplicationCall>.respond(result: Result<T>) {
+        when {
+            result.isSuccess -> {
+                call.respond(result)
+            }
 
-    suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.parseOrNull(): T? {
-        val body = call.receiveOrNull<T>()
-        if (body == null) {
-            call.respond(HttpStatusCode.BadRequest)
+            result.isFailure -> {
+                val exception = result.exceptionOrNull()
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    exception?.message ?: "")
+            }
+
+            // something wrong with flow, not accepted behavior
+            else -> {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    "Internal exception")
+            }
         }
-        return body
     }
 
-    suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.parse(errorMessage: String): Result<T> {
-        val entity = call.receiveOrNull<T>()
-            ?: return negative(errorMessage)
 
-        return positive(entity)
+    suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.parse(): T {
+        val body = call.receiveOrNull<T>()
+        if (body != null)
+            return body
+
+        call.respond(HttpStatusCode.BadRequest)
+        throw IllegalStateException("body is null")
     }
 }
 

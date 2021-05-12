@@ -4,7 +4,6 @@ import ru.melanxoluk.hodor.domain.context.AppContext
 import ru.melanxoluk.hodor.domain.entities.App
 import ru.melanxoluk.hodor.domain.entities.AppRole
 import ru.melanxoluk.hodor.services.AppsService
-import ru.melanxoluk.hodor.services.ServiceResult
 import io.ktor.application.Application
 import io.ktor.routing.Route
 import io.ktor.routing.get
@@ -49,10 +48,8 @@ class AppsController(baseUrl: String,
 
         post("apps") {
             val userContext = validateHodor() ?: return@post
-            val newApp = parseOrNull<NewApp>() ?: return@post
-            if (!assert(newApp.name to "name is not provided")) {
-                return@post
-            }
+            val newApp = parse<NewApp>() ?: return@post
+            assert(newApp.name to "name is not provided")
 
             this.respond(appsService
                 .create(userContext, newApp.name)

@@ -29,10 +29,9 @@ class ClientsController(baseUrl: String,
 
         post("apps/{uuid}/clients") {
             val userContext = validateHodor() ?: return@post
-            val newClient = parseOrNull<NewClient>() ?: return@post
-            if (!assert(newClient.type to "type is not provided")) {
-                return@post
-            }
+            val newClient = parse<NewClient>() ?: return@post
+            assert(newClient.type to "type is not provided")
+
             val sAppUuid = call.parameters["uuid"]
             val appUuid = UUID.fromString(sAppUuid)
 

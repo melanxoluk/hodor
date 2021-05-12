@@ -10,6 +10,7 @@ import ru.melanxoluk.hodor.domain.entities.UsernamePassword
 import ru.melanxoluk.hodor.secure.PasswordHasher
 import org.koin.core.component.get
 import java.util.*
+import kotlin.math.log
 
 
 class UsernameContextRepository: ContextRepository() {
@@ -25,42 +26,34 @@ class UsernameContextRepository: ContextRepository() {
 
 
     fun getOrCreate(login: UsernameLogin): Result<UsernameContext> {
-        val client = clientsRepository.findByUuid(login.client)
-            ?: return negative(notFoundClient(login.client))
-
-        val res = get(client, login)
-        return when(res) {
-            is Positive -> res
-            is Negative -> create(client, login)
-            else -> throw IllegalStateException()
-        }
+        return clientsRepository.findByUuid(login.client).fold(
+            { get(it, login) },
+            { create(login) }
+        )
     }
 
     fun get(login: UsernameLogin): Result<UsernameContext> {
-        val client = clientsRepository.findByUuid(login.client)
-            ?: return negative(notFoundClient(login.client))
-
-        return get(client, login)
+        return clientsRepository.findByUuid(login.client).flatMap {
+            get(it, login)
+        }
     }
 
     fun get(client: AppClient, login: UsernameLogin): Result<UsernameContext> {
-        val usernamePassword = usernamePasswordsRepository.findByUsername(login.username)
-            ?: return negative(notFoundUser(login.username))
-
-        val app = appsRepository.read(client.id)
-        val user = usersRepository.read(usernamePassword.id)
-        val userRolesContext = usersRolesContextRepository.get(user)
-        return positive(UsernameContext(usernamePassword, app, client, userRolesContext))
+        return usernamePasswordsRepository.findByUsername(login.username).map { usernamePassword ->
+            val app = appsRepository.read(client.id)
+            val user = usersRepository.read(usernamePassword.id)
+            val userRolesContext = usersRolesContextRepository.get(user)
+            UsernameContext(usernamePassword, app, client, userRolesContext)
+        }
     }
 
     fun create(login: UsernameLogin): Result<UsernameContext> {
-        val client = clientsRepository.findByUuid(login.client)
-            ?: return negative(notFoundClient(login.client))
-
-        return create(client, login)
+        return clientsRepository.findByUuid(login.client).map {
+            create(it, login)
+        }
     }
 
-    fun create(client: AppClient, login: UsernameLogin): Result<UsernameContext> {
+    fun create(client: AppClient, login: UsernameLogin): UsernameContext {
         val appContext = appContextRepository.get(client)
         val user = usersRepository.create(
             User(0, appContext.app.id, "", UUID.randomUUID()))
@@ -74,6 +67,6 @@ class UsernameContextRepository: ContextRepository() {
         }
 
         val userRolesContext = UserRolesContext(user, userRoles, appContext.defaultRoles)
-        return positive(UsernameContext(usernamePassword, appContext.app, client, userRolesContext))
+        return UsernameContext(usernamePassword, appContext.app, client, userRolesContext)
     }
 }
