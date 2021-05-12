@@ -19,19 +19,13 @@ const val hodorPrefix = "__hodor__"
 
 // ~~~ super user
 
-var hodorSuperUsernamePassword =
-    UsernamePassword(
-        id = 0,
-        username = ru.melanxoluk.hodor.HodorConfig.superUser.login,
-        password = ru.melanxoluk.hodor.HodorConfig.superUser.password,
-        userId = 0)
-    internal set
-
 var hodorSuperUser =
     User(
         id = 0,
         appId = 0,
         properties = hodorPrefix,
+        username = HodorConfig.superUser.login,
+        password = HodorConfig.superUser.password,
         uuid = UUID.fromString("4ccd0b37-a0d0-423c-8a2f-796d85ee8528"))
     internal set
 

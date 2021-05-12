@@ -6,6 +6,8 @@ import java.util.*
 
 data class User(override val id: Long = 0L,
                 val appId: Long,
+                val username: String,
+                val password: String,
                 val properties: String,
                 val uuid: UUID
                ) : LongDomain<User> {

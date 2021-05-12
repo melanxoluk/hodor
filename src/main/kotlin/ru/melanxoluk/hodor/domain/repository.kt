@@ -3,8 +3,11 @@ package ru.melanxoluk.hodor.domain
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.melanxoluk.hodor.common.notFoundResult
+import ru.melanxoluk.hodor.domain.entities.repositories.UsersRepository
 
 
 // repository is unit of management of domain entities
@@ -32,6 +35,14 @@ ReadRepository<
         return table.all()
     }
 
+    fun find(where: SqlExpressionBuilder.() -> Op<Boolean>): Result<D> {
+        return notFoundResult(transaction {
+            return@transaction table.table
+                .select(where)
+                .singleOrNull()
+                ?.let { table.map(it) }
+        })
+    }
 
     fun findSingleBy(where: Where): D?  = with(table) {
         return transaction {

@@ -1,15 +1,14 @@
 package ru.melanxoluk.hodor.services
 
 import org.koin.core.component.get
+import ru.melanxoluk.hodor.common.Token
 import ru.melanxoluk.hodor.common.UsernameLogin
 import ru.melanxoluk.hodor.common.flatMap
 import ru.melanxoluk.hodor.common.result
-import ru.melanxoluk.hodor.domain.context.UsernameContext
+import ru.melanxoluk.hodor.domain.context.UserContext
 import ru.melanxoluk.hodor.secure.PasswordHasher
 import ru.melanxoluk.hodor.secure.TokenService
 
-
-class Token(val token: String)
 
 class SimpleLoginService: Service() {
     private val tokenGenerator = get<TokenService>()
@@ -17,7 +16,7 @@ class SimpleLoginService: Service() {
 
     // totally so terrible idea
     fun simpleLogin(login: UsernameLogin): Result<Token> {
-        return usernameContextRepository.getOrCreate(login).flatMap { usernameRes ->
+        return userContextRepository.getOrCreate(login).flatMap { usernameRes ->
             result(
                 checkPassword(login, usernameRes),
                 { Token(tokenGenerator.generate(usernameRes)) },
@@ -26,7 +25,7 @@ class SimpleLoginService: Service() {
         }
     }
 
-    private fun checkPassword(login: UsernameLogin, context: UsernameContext): Boolean {
+    private fun checkPassword(login: UsernameLogin, context: UserContext): Boolean {
         return hasher.hash(login.password) == context.password
     }
 }

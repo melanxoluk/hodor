@@ -48,7 +48,8 @@ class AppsController(baseUrl: String,
 
         post("apps") {
             val userContext = validateHodor() ?: return@post
-            val newApp = parse<NewApp>() ?: return@post
+            val newApp = parse<NewApp>()
+
             assert(newApp.name to "name is not provided")
 
             this.respond(appsService

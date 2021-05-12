@@ -40,13 +40,12 @@ class AppClientsRepository: LongCrudRepository<AppClient, AppClientsTable>(AppCl
     }
 
 
-    fun findByUuid(uuid: UUID) = notFoundResult(
-        findSingleBy { _uuid eq uuid }
-    )
+    fun findByUuid(uuid: UUID) =
+        find { _uuid eq uuid }
 
-    fun findByApp(app: App) = findMany { _appId eq app.id }
+    fun findByApp(app: App) =
+        findMany { _appId eq app.id }
 
-    fun findByAppAndType(app: App, type: String) = notFoundResult(
-        findSingleBy { (_appId eq app.id) and (_type eq type) }
-    )
+    fun findByAppAndType(app: App, type: String) =
+        find { (_appId eq app.id) and (_type eq type) }
 }

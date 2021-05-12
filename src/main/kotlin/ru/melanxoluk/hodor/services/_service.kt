@@ -1,12 +1,11 @@
 package ru.melanxoluk.hodor.services
 
-import ru.melanxoluk.hodor.domain.context.repositories.AppContextRepository
-import ru.melanxoluk.hodor.domain.context.repositories.UserContextRepository
-import ru.melanxoluk.hodor.domain.context.repositories.UsernameContextRepository
-import ru.melanxoluk.hodor.domain.context.repositories.UsersRolesContextRepository
-import ru.melanxoluk.hodor.domain.entities.repositories.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import ru.melanxoluk.hodor.domain.context.repositories.AppContextRepository
+import ru.melanxoluk.hodor.domain.context.repositories.UserContextRepository
+import ru.melanxoluk.hodor.domain.context.repositories.UsersRolesContextRepository
+import ru.melanxoluk.hodor.domain.entities.repositories.*
 
 
 // if isOk
@@ -62,8 +61,6 @@ abstract class Service: KoinComponent {
     protected val usersRepository = get<UsersRepository>()
 
     protected val usersRolesContextRepository = get<UsersRolesContextRepository>()
-    protected val usernamePasswordRepository = get<UsernamePasswordsRepository>()
-    protected val usernameContextRepository = get<UsernameContextRepository>()
     protected val userContextRepository = get<UserContextRepository>()
     protected val appContextRepository = get<AppContextRepository>()
 

@@ -1,18 +1,5 @@
 package ru.melanxoluk.hodor
 
-import ru.melanxoluk.hodor.domain.StorageContext
-import ru.melanxoluk.hodor.domain.context.repositories.AppContextRepository
-import ru.melanxoluk.hodor.domain.context.repositories.UserContextRepository
-import ru.melanxoluk.hodor.domain.context.repositories.UsernameContextRepository
-import ru.melanxoluk.hodor.domain.context.repositories.UsersRolesContextRepository
-import ru.melanxoluk.hodor.domain.entities.repositories.*
-import ru.melanxoluk.hodor.secure.PasswordHasher
-import ru.melanxoluk.hodor.secure.TokenService
-import ru.melanxoluk.hodor.server.controllers.*
-import ru.melanxoluk.hodor.services.AppsService
-import ru.melanxoluk.hodor.services.ClientsService
-import ru.melanxoluk.hodor.services.SimpleLoginService
-import ru.melanxoluk.hodor.services.UsersService
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.application.log
@@ -22,20 +9,28 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.gson.gson
 import io.ktor.http.HttpMethod
-import io.ktor.http.parametersOf
 import io.ktor.locations.Locations
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.netty.handler.ssl.ApplicationProtocolConfig
-import org.koin.core.KoinApplication
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
-import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
+import ru.melanxoluk.hodor.domain.StorageContext
+import ru.melanxoluk.hodor.domain.context.repositories.AppContextRepository
+import ru.melanxoluk.hodor.domain.context.repositories.UserContextRepository
+import ru.melanxoluk.hodor.domain.context.repositories.UsersRolesContextRepository
+import ru.melanxoluk.hodor.domain.entities.repositories.*
+import ru.melanxoluk.hodor.secure.PasswordHasher
+import ru.melanxoluk.hodor.secure.TokenService
+import ru.melanxoluk.hodor.server.controllers.*
+import ru.melanxoluk.hodor.services.AppsService
+import ru.melanxoluk.hodor.services.ClientsService
+import ru.melanxoluk.hodor.services.SimpleLoginService
+import ru.melanxoluk.hodor.services.UsersService
 
 
 // ~~~ ktor server initialization
@@ -56,7 +51,6 @@ fun Application.main() {
     install(Koin) {
         modules(module {
             single { UsersRepository() }
-            single { UsernamePasswordsRepository() }
             single { UserRolesRepository() }
 
             single { AppsRepository() }
@@ -68,7 +62,6 @@ fun Application.main() {
             // context repositories
             single { AppContextRepository() }
             single { UserContextRepository() }
-            single { UsernameContextRepository() }
             single { UsersRolesContextRepository() }
 
             // services

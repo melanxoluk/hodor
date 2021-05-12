@@ -25,6 +25,8 @@ open class UserContext(
     val clientId get() = client.id
 
     val userUuid get() = user.uuid
+    val username get() = user.username
+    val password get() = user.password
     val userId get() = user.id
 
     val appUuid get() = app.uuid

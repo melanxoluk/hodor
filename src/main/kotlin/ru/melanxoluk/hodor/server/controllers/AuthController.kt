@@ -11,7 +11,7 @@ import ru.melanxoluk.hodor.common.UsernameLogin
 import ru.melanxoluk.hodor.secure.TokenService
 import ru.melanxoluk.hodor.services.ServiceResult
 import ru.melanxoluk.hodor.services.SimpleLoginService
-import ru.melanxoluk.hodor.services.Token
+import ru.melanxoluk.hodor.common.Token
 
 
 @Suppress("SENSELESS_COMPARISON")

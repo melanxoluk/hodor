@@ -1,11 +1,11 @@
 package ru.melanxoluk.hodor.secure
 
-import ru.melanxoluk.hodor.domain.context.UsernameContext
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.joda.time.DateTime
 import org.koin.core.component.KoinComponent
 import org.slf4j.LoggerFactory
+import ru.melanxoluk.hodor.domain.context.UserContext
 import java.util.*
 
 
@@ -34,7 +34,7 @@ class TokenService(private val key: String): KoinComponent {
             .signWith(SignatureAlgorithm.HS512, key)
             .compact()
 
-    fun generate(context: UsernameContext) =
+    fun generate(context: UserContext) =
         Jwts.builder()
             // default claims
             .setIssuedAt(Date())
