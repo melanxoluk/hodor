@@ -1,4 +1,4 @@
-package ru.melanxoluk.hodor.server.controllers
+package ru.melanxoluk.hodor.controllers
 
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
@@ -80,13 +80,13 @@ abstract class Controller(val baseUrl: String = "",
     }
 
 
-    suspend fun PipelineContext<*, ApplicationCall>.token(): String? {
+    suspend fun PipelineContext<*, ApplicationCall>.token(): String {
         val token = call.request.headers[AUTH]
-        if (token == null) {
-            call.respond(HttpStatusCode.Unauthorized)
-        }
+        if (token != null)
+            return token
 
-        return token
+        call.respond(HttpStatusCode.Unauthorized)
+        throw IllegalStateException("Auth header not found")
     }
 
     // todo: provide additional message to client

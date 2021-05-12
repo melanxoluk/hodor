@@ -1,6 +1,7 @@
 package ru.melanxoluk.hodor.domain.entities.repositories
 
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
@@ -20,11 +21,14 @@ import java.util.*
 class UsersRepository: LongCrudRepository<User, UsersTable>(UsersTable) {
     companion object UsersTable: LongCrudTable<UsersTable, User>("users") {
 
-        private val _appId = reference("app_id", AppTable)
+        private val _appId = reference("app_id", AppTable, ReferenceOption.CASCADE)
         private val _username = varchar("username", 255)
         private val _password = varchar("password", 255)
         private val _properties = text("properties")
         private val _uuid = uuid("uuid")
+        init {
+            uniqueIndex(_appId, _username)
+        }
 
         override val fieldsMapper: User.(UpdateBuilder<Int>) -> Unit = {
             it[_appId] = EntityID(this.appId, AppTable)

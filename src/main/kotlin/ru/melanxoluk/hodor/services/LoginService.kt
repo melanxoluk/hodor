@@ -10,16 +10,16 @@ import ru.melanxoluk.hodor.secure.PasswordHasher
 import ru.melanxoluk.hodor.secure.TokenService
 
 
-class SimpleLoginService: Service() {
+class LoginService: Service() {
     private val tokenGenerator = get<TokenService>()
     private val hasher = get<PasswordHasher>()
 
-    // totally so terrible idea
-    fun simpleLogin(login: UsernameLogin): Result<Token> {
-        return userContextRepository.getOrCreate(login).flatMap { usernameRes ->
+    // fixme totally so terrible idea
+    fun login(login: UsernameLogin): Result<Token> {
+        return userContextRepository.get(login).flatMap { user ->
             result(
-                checkPassword(login, usernameRes),
-                { Token(tokenGenerator.generate(usernameRes)) },
+                checkPassword(login, user),
+                { Token(tokenGenerator.generate(user)) },
                 { IllegalArgumentException("Wrong credentials") }
             )
         }

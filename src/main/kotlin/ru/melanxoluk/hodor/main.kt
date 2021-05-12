@@ -19,6 +19,7 @@ import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
+import ru.melanxoluk.hodor.controllers.*
 import ru.melanxoluk.hodor.domain.StorageContext
 import ru.melanxoluk.hodor.domain.context.repositories.AppContextRepository
 import ru.melanxoluk.hodor.domain.context.repositories.UserContextRepository
@@ -26,10 +27,9 @@ import ru.melanxoluk.hodor.domain.context.repositories.UsersRolesContextReposito
 import ru.melanxoluk.hodor.domain.entities.repositories.*
 import ru.melanxoluk.hodor.secure.PasswordHasher
 import ru.melanxoluk.hodor.secure.TokenService
-import ru.melanxoluk.hodor.server.controllers.*
 import ru.melanxoluk.hodor.services.AppsService
 import ru.melanxoluk.hodor.services.ClientsService
-import ru.melanxoluk.hodor.services.SimpleLoginService
+import ru.melanxoluk.hodor.services.LoginService
 import ru.melanxoluk.hodor.services.UsersService
 
 
@@ -65,7 +65,7 @@ fun Application.main() {
             single { UsersRolesContextRepository() }
 
             // services
-            single { SimpleLoginService() }
+            single { LoginService() }
             single { ClientsService() }
             single { UsersService() }
             single { AppsService() }
@@ -75,7 +75,8 @@ fun Application.main() {
                 AboutController(it[0], it[1]),
                 AuthController(it[0], it[1]),
                 AppsController(it[0], it[1]),
-                ClientsController(it[0], it[1]))
+                ClientsController(it[0], it[1])
+            )
             }
 
             // misc

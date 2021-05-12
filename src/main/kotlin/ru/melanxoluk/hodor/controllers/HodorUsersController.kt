@@ -1,4 +1,4 @@
-package ru.melanxoluk.hodor.server.controllers
+package ru.melanxoluk.hodor.controllers
 
 import io.ktor.application.Application
 import io.ktor.routing.Route

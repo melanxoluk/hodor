@@ -8,6 +8,7 @@ import ru.melanxoluk.hodor.domain.entities.DefaultAppRole
 import ru.melanxoluk.hodor.domain.entities.UserRole
 import ru.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRolesTable
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -17,7 +18,7 @@ import java.util.*
 class AppRolesRepository: LongCrudRepository<AppRole, AppRolesTable>(AppRolesTable) {
     companion object AppRolesTable : LongCrudTable<AppRolesTable, AppRole>("app_roles") {
 
-        private val _appId = reference("app_id", AppsRepository)
+        private val _appId = reference("app_id", AppsRepository, ReferenceOption.CASCADE)
         private val _uuid = uuid("uuid")
         private val _name = text("name")
 

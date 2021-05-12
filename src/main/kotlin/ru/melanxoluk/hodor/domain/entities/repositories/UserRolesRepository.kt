@@ -9,6 +9,7 @@ import ru.melanxoluk.hodor.domain.entities.repositories.AppRolesRepository.AppRo
 import ru.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
 import ru.melanxoluk.hodor.domain.entities.repositories.UserRolesRepository.UserRolesTable
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -17,8 +18,8 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 class UserRolesRepository: LongCrudRepository<UserRole, UserRolesTable>(UserRolesTable) {
     companion object UserRolesTable : LongCrudTable<UserRolesTable, UserRole>("user_roles") {
 
-        private val _roleId = reference("role_id", AppRolesTable)
-        private val _userId = reference("user_id", UsersTable)
+        private val _roleId = reference("role_id", AppRolesTable, ReferenceOption.CASCADE)
+        private val _userId = reference("user_id", UsersTable, ReferenceOption.CASCADE)
 
         override val fieldsMapper: UserRole.(UpdateBuilder<Int>) -> Unit = {
             it[_roleId] = EntityID(this.roleId, AppRolesTable)

@@ -12,6 +12,7 @@ import ru.melanxoluk.hodor.domain.entities.UserRole
 import java.util.*
 
 
+// todo: move to UsersService all none persisting logic
 class UserContextRepository: ContextRepository() {
     private companion object {
         private fun notFoundClient(uuid: UUID) = "Not found client $uuid"
@@ -52,13 +53,6 @@ class UserContextRepository: ContextRepository() {
         }
     }
 
-    fun getOrCreate(login: UsernameLogin): Result<UserContext> {
-        return clientsRepository.findByUuid(login.client).fold(
-            { get(it, login) },
-            { create(login) }
-        )
-    }
-
 
     fun create(login: UsernameLogin): Result<UserContext> {
         return clientsRepository.findByUuid(login.client).map {
@@ -71,7 +65,7 @@ class UserContextRepository: ContextRepository() {
 
         val pass = passwordHasher.hash(login.password)
         val user = usersRepository.create(
-            User(0, appContext.app.id, "", login.username, pass, UUID.randomUUID())
+            User(0, appContext.app.id, login.username, pass, "", UUID.randomUUID())
         )
 
         val userRoles = appContext.defaultRoles.map { appRole ->

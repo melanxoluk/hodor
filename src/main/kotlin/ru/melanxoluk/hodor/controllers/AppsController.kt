@@ -1,4 +1,4 @@
-package ru.melanxoluk.hodor.server.controllers
+package ru.melanxoluk.hodor.controllers
 
 import ru.melanxoluk.hodor.domain.context.AppContext
 import ru.melanxoluk.hodor.domain.entities.App

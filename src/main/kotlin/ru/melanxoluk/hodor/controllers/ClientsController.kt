@@ -1,4 +1,4 @@
-package ru.melanxoluk.hodor.server.controllers
+package ru.melanxoluk.hodor.controllers
 
 import ru.melanxoluk.hodor.services.ClientsService
 import io.ktor.application.Application

@@ -1,4 +1,4 @@
-package ru.melanxoluk.hodor.server.controllers
+package ru.melanxoluk.hodor.controllers
 
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
@@ -10,25 +10,20 @@ import org.koin.core.component.get
 import ru.melanxoluk.hodor.common.UsernameLogin
 import ru.melanxoluk.hodor.secure.TokenService
 import ru.melanxoluk.hodor.services.ServiceResult
-import ru.melanxoluk.hodor.services.SimpleLoginService
+import ru.melanxoluk.hodor.services.LoginService
 import ru.melanxoluk.hodor.common.Token
+import ru.melanxoluk.hodor.services.UsersService
 
 
 @Suppress("SENSELESS_COMPARISON")
-class AuthController(baseUrl: String,
-                     app: Application): Controller(baseUrl, app) {
-
-    private val loginService = get<SimpleLoginService>()
+class AuthController(baseUrl: String, app: Application): Controller(baseUrl, app) {
+    private val loginService = get<LoginService>()
+    private val usersService = get<UsersService>()
     private val tokenService = get<TokenService>()
 
     override fun routes(): Route.() -> Unit = {
         get("is_valid") {
             val token = token()
-            if (token == null) {
-                badRequest()
-                return@get
-            }
-
             if (tokenService.isValidExpiration(token)) {
                 ok()
             } else {
@@ -36,13 +31,9 @@ class AuthController(baseUrl: String,
             }
         }
 
+        // todo: provide description how and why need token refreshing
         get("refresh") {
             val token = token()
-            if (token == null) {
-                badRequest()
-                return@get
-            }
-
             if (tokenService.isValidExpiration(token)) {
                 val refreshed = tokenService.refresh(token)
                 val tokenRes = Token(refreshed)
@@ -52,6 +43,7 @@ class AuthController(baseUrl: String,
             }
         }
 
+
         suspend fun PipelineContext<*, ApplicationCall>.assertLogin(login: UsernameLogin) = login.also {
             assert(
                 login.username to "'username' is not provided",
@@ -60,15 +52,12 @@ class AuthController(baseUrl: String,
             )
         }
 
-        post("simple_login") {
-            val login = assertLogin(parse())
-            val newToken = loginService.simpleLogin(login)
-            respond(newToken)
+        post("login") {
+            respond(loginService.login(assertLogin(parse())))
         }
 
         post("register") {
-            val login = assertLogin(parse())
-
+            respond(usersService.create(assertLogin(parse())))
         }
     }
 }

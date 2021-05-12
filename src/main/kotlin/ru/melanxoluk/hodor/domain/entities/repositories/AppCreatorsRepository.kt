@@ -9,6 +9,7 @@ import ru.melanxoluk.hodor.domain.entities.repositories.AppCreatorsRepository.Ap
 import ru.melanxoluk.hodor.domain.entities.repositories.AppsRepository.AppTable
 import ru.melanxoluk.hodor.domain.entities.repositories.UsersRepository.UsersTable
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 
@@ -17,8 +18,8 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 class AppCreatorsRepository: LongCrudRepository<AppCreator, AppCreatorTable>(AppCreatorTable) {
     companion object AppCreatorTable: LongCrudTable<AppCreatorTable, AppCreator>("app_creators") {
 
-        private val _appId = reference("app_id", AppTable)
-        private val _userId = reference("user_id", UsersTable)
+        private val _appId = reference("app_id", AppTable, ReferenceOption.CASCADE)
+        private val _userId = reference("user_id", UsersTable, ReferenceOption.CASCADE)
 
         override val fieldsMapper: AppCreator.(UpdateBuilder<Int>) -> Unit = {
             it[_appId] = EntityID(this.appId, AppTable)

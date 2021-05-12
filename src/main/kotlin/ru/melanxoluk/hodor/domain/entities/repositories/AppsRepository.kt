@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.melanxoluk.hodor.common.notFoundResult
 import java.util.*
 
 
@@ -34,13 +35,13 @@ class AppsRepository: LongCrudRepository<App, AppTable>(AppTable) {
 
     fun findByName(name: String) = findSingleBy { _name eq name }
 
-    fun findByClientUuid(clientUuid: UUID): App? {
-        return transaction {
+    fun findByClientUuid(clientUuid: UUID): Result<App> {
+        return notFoundResult(transaction {
             return@transaction table
                 .leftJoin(AppClientsTable)
                 .select { AppClientsTable._uuid eq clientUuid }
                 .singleOrNull()
                 ?.let { map(it) }
-        }
+        })
     }
 }
