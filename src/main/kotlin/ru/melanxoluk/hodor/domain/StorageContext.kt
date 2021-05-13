@@ -65,28 +65,23 @@ object StorageContext: KoinComponent {
     // ~~~ init app entities
 
     private fun initHodorApp() {
-        val app =
-            applicationsRepository
-                .findByName(hodorApp.name)
-
-        hodorApp = app ?:
-            applicationsRepository.create(hodorApp)
+        applicationsRepository.findByName(hodorApp.name)
+            .onSuccess { hodorApp = it }
+            .onFailure { hodorApp = applicationsRepository.create(hodorApp) }
     }
 
     private fun initHodorUser(app: App) {
-        val hodorUser =
-            usersRepository
-                .findWithHodorPrefix()
+        usersRepository.findWithHodorPrefix()
+            .onFailure {
+                hodorSuperUser = usersRepository.create(
+                    hodorSuperUser.copy(appId = app.id)
+                )
 
-        if (hodorUser == null) {
-            hodorSuperUser = usersRepository.create(
-                hodorSuperUser.copy(appId = app.id))
-
-            appCreatorsRepository.create(
-                AppCreator(appId = app.id, userId = hodorSuperUser.id))
-        } else {
-            hodorSuperUser = hodorUser
-        }
+                appCreatorsRepository.create(
+                    AppCreator(appId = app.id, userId = hodorSuperUser.id)
+                )
+            }
+            .onSuccess { hodorSuperUser = it }
     }
 
     private fun initHodorAppClient(app: App) {

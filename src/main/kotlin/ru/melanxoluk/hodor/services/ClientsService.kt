@@ -5,16 +5,13 @@ import java.util.*
 
 
 class ClientsService: Service() {
-    fun getAll(appUuid: UUID) = ok<List<AppClient>> {
-        val app = appsRepository.findByUuid(appUuid)
-            ?: return@ok clientError("not found app")
-        appClientsRepository.findByApp(app)
-    }
+    fun getAll(appUuid: UUID) =
+        appsRepository.findByUuid(appUuid).map {
+            appClientsRepository.findByApp(it)
+        }
 
-    fun create(appUuid: UUID, type: String) = ok<AppClient> {
-        val app = appsRepository.findByUuid(appUuid)
-            ?: return@ok clientError("not found app")
-
-        appClientsRepository.create(AppClient(0, app.id, type, UUID.randomUUID()))
-    }
+    fun create(appUuid: UUID, type: String) =
+        appsRepository.findByUuid(appUuid).map { app ->
+            appClientsRepository.create(AppClient(0, app.id, type, UUID.randomUUID()))
+        }
 }

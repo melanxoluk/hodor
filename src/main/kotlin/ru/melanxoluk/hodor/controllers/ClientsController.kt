@@ -21,14 +21,14 @@ class ClientsController(baseUrl: String,
 
     override fun routes(): Route.() -> Unit = {
         get("apps/{uuid}/clients") {
-            val userContext = validateHodor() ?: return@get
+            val userContext = getHodorUser() ?: return@get
             val sAppUuid = call.parameters["uuid"]
             val appUuid = UUID.fromString(sAppUuid)
             this.respond(clientsService.getAll(appUuid))
         }
 
         post("apps/{uuid}/clients") {
-            val userContext = validateHodor() ?: return@post
+            val userContext = getHodorUser() ?: return@post
             val newClient = parse<NewClient>() ?: return@post
             assert(newClient.type to "type is not provided")
 

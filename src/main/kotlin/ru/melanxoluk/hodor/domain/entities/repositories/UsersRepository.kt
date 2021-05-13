@@ -52,9 +52,11 @@ class UsersRepository: LongCrudRepository<User, UsersTable>(UsersTable) {
     }
 
 
-    fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
+    fun findByUuid(uuid: UUID) =
+        find { _uuid eq uuid }
 
-    fun findWithHodorPrefix() = findSingleBy { _properties eq hodorPrefix }
+    fun findWithHodorPrefix() =
+        find { _properties eq hodorPrefix }
 
     fun findByAppAndEmail(appId: Long, username: String) =
         find { (_appId eq appId) and (_username eq username) }

@@ -9,6 +9,7 @@ import ru.melanxoluk.hodor.domain.context.UserRolesContext
 import ru.melanxoluk.hodor.domain.entities.AppClient
 import ru.melanxoluk.hodor.domain.entities.User
 import ru.melanxoluk.hodor.domain.entities.UserRole
+import ru.melanxoluk.hodor.secure.ParsedToken
 import java.util.*
 
 
@@ -24,18 +25,12 @@ class UserContextRepository: ContextRepository() {
     private val tokenService = get<TokenService>()
 
     
-    fun get(token: String): UserContext {
-        // token should be verified already here
-        // extract all available ids from token
-        val parsedToken = tokenService.parse(token)
-
-        // fixme
-        val client = clientsRepository.findByUuid(parsedToken.clientUuid).getOrThrow()
-        val app = appsRepository.findByUuid(parsedToken.appUuid)!!
-
-        val user = usersRepository.findByUuid(parsedToken.userUuid)!!
+    fun get(token: ParsedToken): UserContext {
+        // if token parsed then 99% everything should be successfully found
+        val client = clientsRepository.findByUuid(token.clientUuid).getOrThrow()
+        val app = appsRepository.findByUuid(token.appUuid).getOrThrow()
+        val user = usersRepository.findByUuid(token.userUuid).getOrThrow()
         val userRolesContext = usersRolesContextRepository.get(user)
-
         return UserContext(app, client, userRolesContext)
     }
 

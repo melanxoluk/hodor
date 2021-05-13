@@ -14,22 +14,20 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.slf4j.LoggerFactory
 import ru.melanxoluk.hodor.domain.context.UserContext
-import ru.melanxoluk.hodor.domain.context.repositories.UserContextRepository
 import ru.melanxoluk.hodor.domain.hodorApp
 import ru.melanxoluk.hodor.secure.TokenService
 import ru.melanxoluk.hodor.services.ServiceResult
+import ru.melanxoluk.hodor.services.UsersService
 
 
-abstract class Controller(val baseUrl: String = "",
-                          val app: Application): HasRouting, KoinComponent {
+abstract class Controller(baseUrl: String = "", app: Application): HasRouting, KoinComponent {
     companion object {
         private const val AUTH = "Authorization"
         private val log = LoggerFactory.getLogger(Controller::class.java)
     }
 
-
-    private val userContextRepository = get<UserContextRepository>()
     private val tokenService = get<TokenService>()
+    private val usersService = get<UsersService>()
 
     init {
         app.routing {
@@ -41,52 +39,33 @@ abstract class Controller(val baseUrl: String = "",
     }
 
 
-    suspend fun PipelineContext<*, ApplicationCall>.validateHodor(): UserContext? {
-        val userContext = validateToken()
-        if (userContext.isError) {
-            return null
+    suspend fun PipelineContext<*, ApplicationCall>.getHodorUser(): Result<UserContext> {
+        return getUser().map { user ->
+            assert(isHodor(user) to "Not Hodor user")
+            user
         }
-
-        if (!isHodor(userContext.result!!)) {
-            return null
-        }
-
-        return userContext.result
     }
 
-    suspend fun PipelineContext<*, ApplicationCall>.validateToken(): ServiceResult<UserContext> {
-        val token = call.request.headers[AUTH]
-        if (token == null) {
-            call.respond(HttpStatusCode.Unauthorized)
-            return ServiceResult.clientError("Auth header not provided")
-        }
-
-        val isValid = tokenService.isValidExpiration(token)
-        if (!isValid) {
-            call.respond(HttpStatusCode.Unauthorized)
-            return ServiceResult.clientError("Expired auth provided")
-        }
-
-        return ServiceResult.ok(userContextRepository.get(token))
+    suspend fun PipelineContext<*, ApplicationCall>.getUser(): Result<UserContext> {
+        return usersService.get(token())
     }
 
-    suspend fun PipelineContext<*, ApplicationCall>.isHodor(userContext: UserContext): Boolean {
-        if (userContext.app != hodorApp) {
-            call.respond(HttpStatusCode.BadRequest)
-            return false
-        }
-
-        return true
+    fun isHodor(userContext: UserContext): Boolean {
+        return userContext.appId == hodorApp.id
     }
 
 
     suspend fun PipelineContext<*, ApplicationCall>.token(): String {
         val token = call.request.headers[AUTH]
-        if (token != null)
-            return token
+        if (token == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            throw IllegalStateException("Auth header not found")
+        }
 
-        call.respond(HttpStatusCode.Unauthorized)
-        throw IllegalStateException("Auth header not found")
+        if (!tokenService.isValidExpiration(token))
+            unauthorized()
+
+        return token
     }
 
     // todo: provide additional message to client
@@ -103,7 +82,7 @@ abstract class Controller(val baseUrl: String = "",
         val iter = args.iterator()
         while (iter.hasNext()) {
             val pair = iter.next()
-            if (pair.first == null) {
+            if (pair.first == null || pair.first == false) {
                 call.respond(HttpStatusCode.BadRequest, pair.second)
                 throw IllegalStateException("Assertion failed: ${pair.second}")
             }
@@ -120,6 +99,7 @@ abstract class Controller(val baseUrl: String = "",
 
     suspend fun PipelineContext<*, ApplicationCall>.unauthorized() {
         call.respond(HttpStatusCode.Unauthorized)
+        throw IllegalStateException("Unauthorized")
     }
 
 
@@ -150,10 +130,10 @@ abstract class Controller(val baseUrl: String = "",
         }
     }
 
-    suspend fun <T> PipelineContext<*, ApplicationCall>.respond(result: Result<T>) {
+    suspend inline fun <reified T> PipelineContext<*, ApplicationCall>.respond(result: Result<T>) {
         when {
             result.isSuccess -> {
-                call.respond(result)
+                call.respond(result.getOrThrow()!!)
             }
 
             result.isFailure -> {

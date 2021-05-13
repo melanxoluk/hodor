@@ -9,7 +9,6 @@ import io.ktor.util.pipeline.PipelineContext
 import org.koin.core.component.get
 import ru.melanxoluk.hodor.common.UsernameLogin
 import ru.melanxoluk.hodor.secure.TokenService
-import ru.melanxoluk.hodor.services.ServiceResult
 import ru.melanxoluk.hodor.services.LoginService
 import ru.melanxoluk.hodor.common.Token
 import ru.melanxoluk.hodor.services.UsersService
@@ -33,14 +32,7 @@ class AuthController(baseUrl: String, app: Application): Controller(baseUrl, app
 
         // todo: provide description how and why need token refreshing
         get("refresh") {
-            val token = token()
-            if (tokenService.isValidExpiration(token)) {
-                val refreshed = tokenService.refresh(token)
-                val tokenRes = Token(refreshed)
-                this.respond(ServiceResult.ok(tokenRes))
-            } else {
-                unauthorized()
-            }
+            respond(tokenService.refresh(token()).map { Token(it) })
         }
 
 
@@ -57,7 +49,7 @@ class AuthController(baseUrl: String, app: Application): Controller(baseUrl, app
         }
 
         post("register") {
-            respond(usersService.create(assertLogin(parse())))
+            respond(usersService.register(assertLogin(parse())).map {  })
         }
     }
 }

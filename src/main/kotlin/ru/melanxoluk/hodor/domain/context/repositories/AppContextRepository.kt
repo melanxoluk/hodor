@@ -20,7 +20,8 @@ class AppContextRepository: ContextRepository() {
         val defaultAppRoles = defaultAppRolesRepository.findByApp(app)
         val appRoles = appRolesRepository.findByApp(app)
         val defaultRoles = appRolesRepository.findByAppDefaultRoles(defaultAppRoles)
-        return AppContext(app, creatorContext.user, appCreator, defaultRoles, appRoles)
+        val clients = clientsRepository.findByApp(app)
+        return AppContext(app, creatorContext.user, appCreator, defaultRoles, appRoles, clients)
     }
 
     fun get(client: AppClient): AppContext {
@@ -30,6 +31,7 @@ class AppContextRepository: ContextRepository() {
         val appRoles = appRolesRepository.findByAppDefaultRoles(defaultAppRoles)
         val appCreator = appCreatorsRepository.findByApp(app)!!
         val user = usersRepository.read(appCreator.userId)
-        return AppContext(app, user, appCreator, appRoles, allRoles)
+        val clients = clientsRepository.findByApp(app)
+        return AppContext(app, user, appCreator, appRoles, allRoles, clients)
     }
 }

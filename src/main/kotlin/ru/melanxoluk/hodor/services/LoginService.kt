@@ -1,10 +1,7 @@
 package ru.melanxoluk.hodor.services
 
 import org.koin.core.component.get
-import ru.melanxoluk.hodor.common.Token
-import ru.melanxoluk.hodor.common.UsernameLogin
-import ru.melanxoluk.hodor.common.flatMap
-import ru.melanxoluk.hodor.common.result
+import ru.melanxoluk.hodor.common.*
 import ru.melanxoluk.hodor.domain.context.UserContext
 import ru.melanxoluk.hodor.secure.PasswordHasher
 import ru.melanxoluk.hodor.secure.TokenService
@@ -14,12 +11,12 @@ class LoginService: Service() {
     private val tokenGenerator = get<TokenService>()
     private val hasher = get<PasswordHasher>()
 
-    // fixme totally so terrible idea
-    fun login(login: UsernameLogin): Result<Token> {
+
+    fun login(login: UsernameLogin): Result<UserAuth> {
         return userContextRepository.get(login).flatMap { user ->
             result(
                 checkPassword(login, user),
-                { Token(tokenGenerator.generate(user)) },
+                { UserAuth(Me(user), tokenGenerator.generate(user)) },
                 { IllegalArgumentException("Wrong credentials") }
             )
         }

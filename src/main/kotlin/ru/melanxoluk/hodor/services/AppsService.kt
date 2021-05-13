@@ -7,15 +7,14 @@ import java.util.*
 
 
 class AppsService: Service() {
-    fun getAll(userContext: UserContext) = ok<List<AppContext>> {
+    fun getAll(userContext: UserContext) =
         appContextRepository.getAll(userContext)
-    }
 
-    fun create(context: UserContext, name: String) = ok<AppContext> {
+    fun create(context: UserContext, name: String): AppContext {
         val app = appsRepository.create(App(0, name, UUID.randomUUID()))
 
         // todo I don't sure about now
-        val appClient = appClientsRepository.create(AppClient(0, app.id, "web", UUID.randomUUID()))
+        val webClient = appClientsRepository.create(AppClient(0, app.id, "web", UUID.randomUUID()))
 
         val creator = appCreatorsRepository.create(AppCreator(0, app.id, context.userId))
         val adminRole = appRoleRepository.create(AppRole(0, UUID.randomUUID(), app.id, "admin"))
@@ -26,6 +25,6 @@ class AppsService: Service() {
         val admin = usersRepository.create(User(0, app.id, context.username, context.password, "", UUID.randomUUID()))
         userRolesRepository.create(UserRole(0, adminRole.id, admin.id))
 
-        return@ok AppContext(app, context.user, creator, listOf(userRole), listOf(adminRole, userRole))
+        return AppContext(app, context.user, creator, listOf(userRole), listOf(adminRole, userRole), listOf(webClient))
     }
 }

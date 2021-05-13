@@ -33,14 +33,10 @@ import ru.melanxoluk.hodor.services.LoginService
 import ru.melanxoluk.hodor.services.UsersService
 
 
-// ~~~ ktor server initialization
-
 fun Application.main() {
     // todo:
     //   not allow validation of token
     //   from browser
-
-    // setup necessary features
     install(CORS) {
         allowCredentials = true
         allowSameOrigin = true
@@ -75,13 +71,13 @@ fun Application.main() {
                 AboutController(it[0], it[1]),
                 AuthController(it[0], it[1]),
                 AppsController(it[0], it[1]),
-                ClientsController(it[0], it[1])
-            )
-            }
+                ClientsController(it[0], it[1]),
+                UsersController(it[0], it[1]),
+            ) }
 
             // misc
-            single { TokenService(ru.melanxoluk.hodor.HodorConfig.key) }
-            single { PasswordHasher(ru.melanxoluk.hodor.HodorConfig.key.toByteArray()) }
+            single { TokenService(HodorConfig.key) }
+            single { PasswordHasher(HodorConfig.key.toByteArray()) }
         })
     }
     install(Locations)

@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm
 import org.joda.time.DateTime
 import org.koin.core.component.KoinComponent
 import org.slf4j.LoggerFactory
+import ru.melanxoluk.hodor.common.result
 import ru.melanxoluk.hodor.domain.context.UserContext
 import java.util.*
 
@@ -50,9 +51,9 @@ class TokenService(private val key: String): KoinComponent {
             .compact()
 
 
-    fun parse(token: String): ParsedToken {
+    fun parse(token: String): Result<ParsedToken> = result {
         val allClaims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).body
-        return ParsedToken(
+        ParsedToken(
             allClaims.subject,
             UUID.fromString(allClaims[CLIENT_CLAIM].toString()),
             UUID.fromString(allClaims[USER_CLAIM].toString()),
@@ -76,20 +77,21 @@ class TokenService(private val key: String): KoinComponent {
         }
     }
 
-    fun refresh(token: String): String {
-        val parsed = parse(token)
-        return Jwts.builder()
-            // default claims
-            .setIssuedAt(Date())
-            .setExpiration(DateTime.now().plusDays(1).toDate())
-            .setSubject(parsed.username)
+    fun refresh(token: String): Result<String> {
+        return parse(token).map { parsed ->
+            Jwts.builder()
+                // default claims
+                .setIssuedAt(Date())
+                .setExpiration(DateTime.now().plusDays(1).toDate())
+                .setSubject(parsed.username)
 
-            // hodor specific claims
-            .claim(CLIENT_CLAIM, parsed.clientUuid)
-            .claim(USER_CLAIM, parsed.userUuid)
-            .claim(APP_CLAIM, parsed.appUuid)
+                // hodor specific claims
+                .claim(CLIENT_CLAIM, parsed.clientUuid)
+                .claim(USER_CLAIM, parsed.userUuid)
+                .claim(APP_CLAIM, parsed.appUuid)
 
-            .signWith(SignatureAlgorithm.HS512, key)
-            .compact()
+                .signWith(SignatureAlgorithm.HS512, key)
+                .compact()
+        }
     }
 }

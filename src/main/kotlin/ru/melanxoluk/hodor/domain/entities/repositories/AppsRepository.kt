@@ -17,7 +17,7 @@ class AppsRepository: LongCrudRepository<App, AppTable>(AppTable) {
 
     companion object AppTable: LongCrudTable<AppTable, App>("apps") {
         private val _uuid = uuid("uuid")
-        private val _name = text("name")
+        private val _name = text("name").uniqueIndex()
 
         override val fieldsMapper: App.(UpdateBuilder<Int>) -> Unit = {
             it[_uuid] = this.uuid
@@ -31,9 +31,11 @@ class AppsRepository: LongCrudRepository<App, AppTable>(AppTable) {
     }
 
 
-    fun findByUuid(uuid: UUID) = findSingleBy { _uuid eq uuid }
+    fun findByUuid(uuid: UUID) =
+        find { _uuid eq uuid }
 
-    fun findByName(name: String) = findSingleBy { _name eq name }
+    fun findByName(name: String) =
+        find { _name eq name }
 
     fun findByClientUuid(clientUuid: UUID): Result<App> {
         return notFoundResult(transaction {

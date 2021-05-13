@@ -1,6 +1,14 @@
 package ru.melanxoluk.hodor.common
 
 
+fun <T : Any> result(action: () -> T): Result<T> {
+    return try {
+        Result.success(action())
+    } catch (t: Throwable) {
+        Result.failure<T>(t)
+    }
+}
+
 fun <T : Any> result(isOk: Boolean, value: () -> T, err: () -> Throwable) = when {
     isOk -> Result.success(value())
     else -> Result.failure(err())
